@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const socket = require('socket.io')
 const dotenv = require('dotenv')
+const path = require('path');
 const multer = require( "multer");
 const {GridFsStorage} = require('multer-gridfs-storage');
 const grid = require('gridfs-stream')
@@ -25,7 +26,11 @@ const storage= new GridFsStorage({
     file :(req,file)=>{return {filename: Date.now()+'-file-'+file.originalname}}
 })
 
+app.use(express.static(path.join(__dirname, 'build')));
 
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 const upload =  multer({storage});
 let gfs,gridFSBucket
