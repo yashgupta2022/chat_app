@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-
+import { port } from './io';
 
 export const datetime =()=>{
   const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -21,7 +21,7 @@ export const getRoom = (item,userid)=>{
 
 
 export const getName = async(user)=>{
-    const res = await axios.post('http://localhost:8080/getName',{username:user})
+    const res = await axios.post(port + 'getName',{username:user})
     return res.data
 
 }
@@ -30,7 +30,7 @@ export const getfriendList=async(userid)=>{
       
   var friendlist =[]
   var individualfriends =[]
-  const response = await axios.post('http://localhost:8080/friendList',{userid});
+  const response = await axios.post(port + 'friendList',{userid});
   if (response.data === 'Empty' ){
     friendlist =[{ userid:'', username:"No Friends Added" , type:'' , room:''}];
     individualfriends = [{ userid:'', username:"No Friends Added" , type:'' , room:''}]     
@@ -55,7 +55,7 @@ export const getfriendList=async(userid)=>{
 
 export const getMessages=  async(room,userid)=>{
   const obj ={userid , room}
-  const response = await axios.post('http://localhost:8080/showMsg', obj);
+  const response = await axios.post(port + 'showMsg', obj);
   if(response.data==='FAIL') {return []}
   return response.data
 }
@@ -64,7 +64,7 @@ export const getMessages=  async(room,userid)=>{
 export const getLastMessage = async (item, userid) => {
   if (item.username !== 'No Friend Added') {
     const obj = { room: item.room, userid };
-    const response = await axios.post('http://localhost:8080/lastMsg', obj);
+    const response = await axios.post(port + 'lastMsg', obj);
     return response.data;
   }
   return {};
@@ -77,8 +77,8 @@ export const handleDPChange = async(e,item)=>{
       const data = new FormData();
       data.append('name',file.name)
       data.append('file',file)
-      const response = await axios.post('http://localhost:8080/uploadFile',data);
-      const res  = await axios.post('http://localhost:8080/setDP',{userid:item.userid, username:item.username , type:item.type,dp:response.data});
+      const response = await axios.post(port + 'uploadFile',data);
+      const res  = await axios.post(port + 'setDP',{userid:item.userid, username:item.username , type:item.type,dp:response.data});
       return response.data 
     }else{alert ('Invalid Profile Picture Format... Acceptable formats (jpg, png) ')}
     return null
@@ -86,7 +86,7 @@ export const handleDPChange = async(e,item)=>{
 
   
   export const fetchDP = async (item) => {
-    const response = await axios.post('http://localhost:8080/fetchDP', item);
+    const response = await axios.post(port + 'fetchDP', item);
     if (response.data !== 'NotFound') {return response.data;}
     else {return '/alt-dp.jpg';}
   }
@@ -103,18 +103,18 @@ export const handleDPChange = async(e,item)=>{
   }
 
     export const getallfriends=async(room)=>{
-      const response = await axios.post('http://localhost:8080/getGroupFriendList',{room:room})
+      const response = await axios.post(port + 'getGroupFriendList',{room:room})
       return response.data
     }
 
 
     export const getAllUsers = async()=>{
-      const res = await axios.get('http://localhost:8080/getAllUsers')
+      const res = await axios.get(port + 'getAllUsers')
       return res.data      
     }
 
     export const updateFriendList =async (userid,room)=>{
-      const res = await axios.post('http://localhost:8080/updateFriendList',{userid,room})
+      const res = await axios.post(port + 'updateFriendList',{userid,room})
     }
     
 

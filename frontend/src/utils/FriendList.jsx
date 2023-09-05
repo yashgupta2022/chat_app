@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import {Button, Col, Container, Form, ListGroup, Row } from 'react-bootstrap';
 import axios from 'axios';
+import { port } from '../utils/io';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faEllipsisVertical, faPaperPlane} from '@fortawesome/free-solid-svg-icons'
@@ -97,12 +98,12 @@ const FriendList =({setItem,friendList,individualFriends,showMessages,showfriend
       setDisable(true);
       setTimeout(async() => {
         // Check Friend in FriendDB
-        const response = await axios.post('http://localhost:8080/check-friend',{userid : friend.userid})
+        const response = await axios.post(port + 'check-friend',{userid : friend.userid})
           if (response.data==="success"){
               // Add Friend in FriendDB -> user->friend  and friend->user
               let room  = getRoom({...friend,type:'individual'} ,userid)
               const obj = {type:'individual', room , friendList : [friend.userid,userid] };
-              const response2 = await axios.post('http://localhost:8080/add-friend',obj)
+              const response2 = await axios.post(port + 'add-friend',obj)
               if (response2.data==="success"){
                 setOpen(1)
                 socket.emit('show-friendlist', obj.friendList)
@@ -120,11 +121,11 @@ const FriendList =({setItem,friendList,individualFriends,showMessages,showfriend
       else if (room==='') alert ('Group must have a name')
 
       else { //Group name must be Unique
-        const response =await axios.post('http://localhost:8080/check-group-name',{group: room})
+        const response =await axios.post(port + 'check-group-name',{group: room})
         if (response.data==="fail"){ alert("Enter Unique Group Name") }
         else{
           const obj = {room:room , friendList : [...group,userid] ,type : 'group'};
-          const response2 = await axios.post('http://localhost:8080/add-friend',obj)
+          const response2 = await axios.post(port + 'add-friend',obj)
             if (response2.data==="success"){
               setOpen(1)
               showfriendList()

@@ -3,13 +3,13 @@ import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";  
 import jwtDecode from "jwt-decode";
-
+import { port } from "./io";
 function NavBar({hide}){ 
   
   const navigate = useNavigate();
   const loginSuccess = async (res)=>{
       const decoded = jwtDecode(res.credential);  
-      const response = await axios.post('http://localhost:8080/loginuser',decoded);
+      const response = await axios.post(port + 'loginuser',decoded);
       localStorage.setItem(response.data,true)
       setTimeout(()=>{navigate('/chat/' + response.data)},1000);
   }

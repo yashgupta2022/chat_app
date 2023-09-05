@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import { onlineUsers,handleDPChange,getLastMessage , fetchDP, getallfriends } from './API';
 import socket from './io';
 import ShowImage from "./ShowImage";
-
+import { port } from "./io";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faEllipsisVertical} from '@fortawesome/free-solid-svg-icons'
 
@@ -50,12 +50,12 @@ const SelectedFriendDetails = ({item ,setItem, showfriendList,showMessages})=>{
         e.preventDefault();
         if (input!=='' && input!==userid){
           // Check Friend in FriendDB
-            const response1 = await axios.post('http://localhost:8080/check-friend',{userid: input})
+            const response1 = await axios.post(port + 'check-friend',{userid: input})
             let f_list = await getallfriends(item.room) ,fl=[]
             f_list.forEach(i=>fl.push(i.userid))    
             if (response1.data==="success" ){
                 if (!fl.some(i=>i===input)){
-                    await axios.post('http://localhost:8080/addFriendinGrp',{item:item, newFriend:input})
+                    await axios.post(port + 'addFriendinGrp',{item:item, newFriend:input})
                     socket.emit('show-friendlist' ,[...fl,input])
                 }
                 else {alert('Friend Already in Group')}
@@ -74,7 +74,7 @@ const SelectedFriendDetails = ({item ,setItem, showfriendList,showMessages})=>{
             const f = await getallfriends(item.room);
             f.forEach(i=>fl.push(i.userid))    
         }
-        await axios.post('http://localhost:8080/exitGrp',{userid,item})
+        await axios.post(port + 'exitGrp',{userid,item})
         setDrop(true)
         setItem({userid:'', username: 'No Chat Selected',type:"" ,room:''})
         if (item.type==='individual'){showfriendList();socket.emit('deleted-friendlist' ,item.userid,userid)}
@@ -82,7 +82,7 @@ const SelectedFriendDetails = ({item ,setItem, showfriendList,showMessages})=>{
     }
     
     const deleteChat =async()=>{
-        await axios.post('http://localhost:8080/deleteChat',{userid,item})
+        await axios.post(port + 'deleteChat',{userid,item})
         setDrop(true)
         showMessages(item.room)
         getlastmsg();

@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import axios from 'axios';
-
+import { port } from './io';
 import socket from './io';
 import Home from '../components/Home';
 import SelectedFriendDetails from './SelectedFriendDetails';
@@ -38,7 +38,7 @@ const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item})
             const data = new FormData();
             data.append('name',file.name)
             data.append('file',file)
-            const response = await axios.post('http://localhost:8080/uploadFile',data);
+            const response = await axios.post(port + 'uploadFile',data);
             msg = {senderid : userid , room : item.room, name:item , msgType:'file', body:response.data, filename:file.name, timestamp: datetime()}
             flag=1
           } 
@@ -48,7 +48,7 @@ const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item})
           }
   
           if (flag===1){
-            const response = await axios.post('http://localhost:8080/sendMsg',msg);
+            const response = await axios.post(port + 'sendMsg',msg);
             updateFriendList(userid , msg.room)
             showfriendList()
             setMsgs([...Msgs,{...msg,status:'Delivered'}])
