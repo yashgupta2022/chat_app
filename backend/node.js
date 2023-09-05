@@ -413,8 +413,9 @@ const socketSchema  = new mongoose.Schema({
 
 const Socket = mongoose.model('Socket',socketSchema);
 
+const PORT  = process.env.PORT || 8080
 
-const server = app.listen(8080,()=>{
+const server = app.listen(PORT,()=>{
     console.log("Server Started")
 })
 const io =socket(server,{
