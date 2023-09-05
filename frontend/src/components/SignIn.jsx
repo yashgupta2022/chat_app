@@ -5,7 +5,7 @@ import { Container, Form, Row,Col, Button} from "react-bootstrap";
 import Home from "./Home";
 import axios from 'axios';
  
-import NavBar from '../utils/NavBar';
+import NavBar from '../../src/utils/NavBar';
 
 
 

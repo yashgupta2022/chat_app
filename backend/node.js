@@ -20,17 +20,19 @@ const URL = process.env.url
 app.use(cors()); // for connecting localhost 3000(react) and 8080(node)
 app.use(bodyParser.json());
 
-const storage= new GridFsStorage({
-    url:URL,
-    options:{useUnifiedTopology:true, useNewUrlParser:true },
-    file :(req,file)=>{return {filename: Date.now()+'-file-'+file.originalname}}
-})
+const storage = new GridFsStorage({
+    url: URL,
+    file: (req, file) => {
+      return { filename: Date.now() + '-file-' + file.originalname };
+    },
+  });
+  
 
-app.use(express.static(path.join(__dirname, 'build')));
+// app.use(express.static(path.join(__dirname, 'build')));
 
-app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
+// app.get('/', function (req, res) {
+//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// });
 
 const upload =  multer({storage});
 let gfs,gridFSBucket
@@ -57,7 +59,7 @@ async function main(){
 main();
 
 
-//User SignIn
+    //User SignIn
 const userSchema = new mongoose.Schema({
     userid:String,
     username: String,

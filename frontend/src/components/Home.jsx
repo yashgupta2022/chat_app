@@ -1,7 +1,7 @@
 
 import {Container} from "react-bootstrap";
-import NavBar from "../utils/NavBar";
-import CarouselHome from "../utils/CarouselHome";
+import NavBar from "../../src/utils/NavBar";
+import CarouselHome from "../../src/utils/CarouselHome";
 
 function Home({hide}) {
     return (<>

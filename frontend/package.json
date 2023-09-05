@@ -1,7 +1,6 @@
 {
   "name": "chat_app",
   "version": "0.1.0",
-  "homepage":" https://yashgupta2022.github.io/chat_app/",
   "private": true,
   "dependencies": {
     "@emoji-mart/data": "^1.1.2",
@@ -13,35 +12,21 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.4.0",
-    "body-parser": "^1.20.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "ejs": "^3.1.9",
     "emoji-mart": "^5.5.2",
-    "express": "^4.18.2",
-    "gridfs-stream": "^1.1.1",
     "jwt-decode": "^3.1.2",
-    "mongoose": "^7.4.4",
-    "multer": "^1.4.4",
-    "multer-gridfs-storage": "^5.0.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.8.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.15.0",
     "react-scripts": "5.0.1",
-    "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "npm-run-all -p react-start backend-start",
     "react-start": "react-scripts start",
-    "backend-start": "nodemon ./src/server/node.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
