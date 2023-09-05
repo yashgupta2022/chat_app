@@ -28,11 +28,6 @@ const storage = new GridFsStorage({
   });
   
 
-// app.use(express.static(path.join(__dirname, 'build')));
-
-// app.get('/', function (req, res) {
-//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
 
 const upload =  multer({storage});
 let gfs,gridFSBucket
@@ -222,7 +217,7 @@ app.post('/friendList',async (req,res)=>{
 
 //Upload and Display Files  
 app.post('/uploadFile',upload.single('file'),async (req,res)=>{
-    const imgUrl = "http://localhost:8080/file/"+req.file.filename
+    const imgUrl = "https://chatapp-backend-poxg.onrender.com/file/"+req.file.filename
     res.json(imgUrl)
 
 })
@@ -238,7 +233,6 @@ app.get('/file/:filename',async(req,res)=>{
 //Save Msg to ChatDB
  app.post('/sendMsg',async (req,res)=>{
     const user = await User.findOne({userid:req.body.senderid})
-    const msg = {}
     saveMsg(req.body.senderid,user.username,req.body,'Delivered')
     let receiver = await Friend.findOne({userid: req.body.senderid})
     let names =[]
