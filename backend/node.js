@@ -218,9 +218,7 @@ app.post('/friendList',async (req,res)=>{
 //Upload and Display Files  
 app.post('/uploadFile',upload.single('file'),async (req,res)=>{
     const imgUrl = "https://chatapp-backend-poxg.onrender.com/file/"+req.file.filename
-    console.log(imgUrl)
     res.json(imgUrl)
-
 })
 
 
