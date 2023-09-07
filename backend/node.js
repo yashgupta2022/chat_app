@@ -30,16 +30,7 @@ const storage = new GridFsStorage({
 
 
 const upload =  multer({storage});
-let gfs,gridFSBucket
-const conn =mongoose.connection
-conn.once('open',()=>{
-    gridFSBucket =new mongoose.mongo.GridFSBucket(conn.db,{
-        bucketName:'fs'
-    })
-    gfs = grid(conn.db,mongoose.mongo)
-    gfs.collection('fs')
 
-})
 // Connecting MONGODB
 async function main(){
     try{
@@ -52,6 +43,17 @@ async function main(){
     catch(e){console.error(e)}
 }
 main();
+
+let gfs,gridFSBucket
+const conn =mongoose.connection
+conn.once('open',()=>{
+    gridFSBucket =new mongoose.mongo.GridFSBucket(conn.db,{
+        bucketName:'fs'
+    })
+    gfs = grid(conn.db,mongoose.mongo)
+    gfs.collection('fs')
+
+})
 
 
     //User SignIn
