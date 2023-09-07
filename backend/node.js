@@ -34,29 +34,32 @@ const storage = new GridFsStorage({
 
 const upload =  multer({storage});
 
-let gfs,gridFSBucket
-const conn =mongoose.connection
-console.log(conn,conn.db)
-conn.once('open',()=>{
-    gridFSBucket =new mongoose.mongo.GridFSBucket(conn.db,{
-        bucketName:'fs'
-    })
-    gfs = grid(conn.db,mongoose.mongo)
-    gfs.collection('fs')
-
-})
-// Connecting MONGODB
-async function main(){
-    try{
-    mongoose.connect(URL,{
+let gfs,gridFSBucket,conn
+async function setupConnection() {
+    try {
+      mongoose.connect(URL, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       });
-    console.log('db connected');
+      console.log('db connected');
+  
+      conn = mongoose.connection;
+      conn.once('open',()=>{
+        console.log(conn.db)
+        gridFSBucket =new mongoose.mongo.GridFSBucket(conn.db,{
+            bucketName:'fs'
+        })
+        gfs = grid(conn.db,mongoose.mongo)
+        gfs.collection('fs')
+    
+    })
+    } catch (e) {
+      console.error(e);
     }
-    catch(e){console.error(e)}
-}
-main();
+  }
+  
+  // Invoke the setupConnection function to establish the connection
+  setupConnection();
 
 
     //User SignIn
