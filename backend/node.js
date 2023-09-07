@@ -17,15 +17,22 @@ dotenv.config()
 const URL = process.env.url
 
 //Using MiddleWares
-app.use(cors());
+const corsOptions = {
+    origin: 'https://frabjous-mermaid-b10de5.netlify.app/', // Replace with your frontend domain
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // Enable sending cookies and other credentials
+  };
+  
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-const storage= new GridFsStorage({
-    url:URL,
-    options:{useUnifiedTopology:true, useNewUrlParser:true },
-    file :(req,file)=>{return {filename: Date.now()+'-file-'+file.originalname}}
-})
-
+const storage = new GridFsStorage({
+    url: URL,
+    file: (req, file) => {
+      return { filename: Date.now() + '-file-' + file.originalname };
+    },
+  });
+  
 
 
 const upload =  multer({storage});
@@ -51,6 +58,7 @@ async function main(){
     catch(e){console.error(e)}
 }
 main();
+
 
     //User SignIn
 const userSchema = new mongoose.Schema({
@@ -217,6 +225,7 @@ app.post('/friendList',async (req,res)=>{
 app.post('/uploadFile',upload.single('file'),async (req,res)=>{
     const imgUrl = "https://chatapp-backend-poxg.onrender.com/file/"+req.file.filename
     res.json(imgUrl)
+
 })
 
 
