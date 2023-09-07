@@ -17,11 +17,12 @@ dotenv.config()
 const URL = process.env.url
 
 //Using MiddleWares
-app.use(cors()); // for connecting localhost 3000(react) and 8080(node)
+app.use(cors());
 app.use(bodyParser.json());
 
 const storage = new GridFsStorage({
     url: URL,
+    options:{useUnifiedTopology:true, useNewUrlParser:true },
     file: (req, file) => {
       return { filename: Date.now() + '-file-' + file.originalname };
     },
