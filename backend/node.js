@@ -20,18 +20,25 @@ const URL = process.env.url
 app.use(cors());
 app.use(bodyParser.json());
 
-const storage = new GridFsStorage({
-    url: URL,
+const storage= new GridFsStorage({
+    url:URL,
     options:{useUnifiedTopology:true, useNewUrlParser:true },
-    file: (req, file) => {
-      return { filename: Date.now() + '-file-' + file.originalname };
-    },
-  });
-  
+    file :(req,file)=>{return {filename: Date.now()+'-file-'+file.originalname}}
+})
+
 
 
 const upload =  multer({storage});
+let gfs,gridFSBucket
+const conn =mongoose.connection
+conn.once('open',()=>{
+    gridFSBucket =new mongoose.mongo.GridFSBucket(conn.db,{
+        bucketName:'fs'
+    })
+    gfs = grid(conn.db,mongoose.mongo)
+    gfs.collection('fs')
 
+})
 // Connecting MONGODB
 async function main(){
     try{
@@ -44,18 +51,6 @@ async function main(){
     catch(e){console.error(e)}
 }
 main();
-
-let gfs,gridFSBucket
-const conn =mongoose.connection
-conn.once('open',()=>{
-    gridFSBucket =new mongoose.mongo.GridFSBucket(conn.db,{
-        bucketName:'fs'
-    })
-    gfs = grid(conn.db,mongoose.mongo)
-    gfs.collection('fs')
-
-})
-
 
     //User SignIn
 const userSchema = new mongoose.Schema({
