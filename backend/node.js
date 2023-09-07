@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 const storage = new GridFsStorage({
     url: URL,
     file: (req, file) => {
-      return { filename: Date.now() + '/file/' + file.originalname };
+      return { filename: Date.now() + '-file-' + file.originalname };
     },
   });
   
