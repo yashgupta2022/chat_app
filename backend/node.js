@@ -18,9 +18,9 @@ const URL = process.env.url
 
 //Using MiddleWares
 const corsOptions = {
-    origin: 'https://frabjous-mermaid-b10de5.netlify.app/', // Replace with your frontend domain
+    origin: 'https://frabjous-mermaid-b10de5.netlify.app', 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, // Enable sending cookies and other credentials
+    credentials: true,
   };
   
 app.use(cors(corsOptions));
