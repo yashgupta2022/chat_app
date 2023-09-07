@@ -6,7 +6,6 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const socket = require('socket.io')
 const dotenv = require('dotenv')
-const path = require('path');
 const multer = require( "multer");
 const {GridFsStorage} = require('multer-gridfs-storage');
 const grid = require('gridfs-stream')
@@ -32,12 +31,12 @@ const storage = new GridFsStorage({
       return { filename: Date.now() + '-file-' + file.originalname };
     },
   });
-  
-
 
 const upload =  multer({storage});
+
 let gfs,gridFSBucket
 const conn =mongoose.connection
+console.log(conn,conn.db)
 conn.once('open',()=>{
     gridFSBucket =new mongoose.mongo.GridFSBucket(conn.db,{
         bucketName:'fs'
