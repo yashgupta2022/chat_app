@@ -25,6 +25,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
+let upload
+try{
 const storage = new GridFsStorage({
     url: URL,
     file: (req, file) => {
@@ -33,8 +35,11 @@ const storage = new GridFsStorage({
       return  obj
     }
   });
-
-const upload =  multer({storage:storage});
+console.log(storage,"storeee")
+upload =  multer({storage:storage}); 
+console.log(upload,"uploaade")
+}
+catch(e){console.log("ERRORsssssssss" ,e)}
 
 let gfs,gridFSBucket,conn
 async function setupConnection() {  
@@ -224,11 +229,9 @@ app.post('/friendList',async (req,res)=>{
 // Upload and Display Files  
 
 app.post('/uploadFile',upload.single('file'), (req,res)=>{
-    try{
     console.log(req.file.filename , "here....")
     const imgUrl = "https://chatapp-backend-poxg.onrender.com/file/"+req.file.filename
-    res.json(imgUrl)}
-    catch(e){console.log("ERRORsssssssss" ,e)}
+    res.json(imgUrl)
 })
 
 
