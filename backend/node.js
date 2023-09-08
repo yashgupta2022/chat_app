@@ -28,11 +28,7 @@ app.use(bodyParser.json());
 const storage = new GridFsStorage({
     url: URL,
     file: (req, file) => {
-        console.log('File is being uploaded:', file.originalname);
-      return {
-        filename: Date.now() + '-file-' + file.originalname,
-        bucketName: 'fs', 
-      };
+      return {filename: Date.now() + '-file-' + file.originalname};
     }
   });
 
@@ -226,7 +222,7 @@ app.post('/friendList',async (req,res)=>{
 // Upload and Display Files  
 app.post('/uploadFile',upload.single('file'),async (req,res)=>{
     console.log(req.file.filename , "here....")
-    const imgUrl = "https://chatapp-backend-poxg.onrender.com/file/"+req.file.filename
+    const imgUrl = "/file/"+req.file.filename
     res.json(imgUrl)
 
 })
