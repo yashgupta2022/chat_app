@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, './uploads'); // Adjust the destination folder as needed
+      cb(null, path.join(__dirname,'backend', 'uploads')); // Adjust the destination folder as needed
     },
     filename: function (req, file, cb) {
       cb(null, Date.now() + '-' + file.originalname);
@@ -225,11 +225,7 @@ app.post('/friendList',async (req,res)=>{
 
 // Upload and Display Files  
 
-app.post('/uploadFile',upload.single('file'), (req,res)=>{
-    console.log(req.file.filename , "here....")
-    const imgUrl = "https://chatapp-backend-poxg.onrender.com/file/"+req.file.filename
-    res.json(imgUrl)
-})
+
 
 
 app.post('/uploadFile', upload.single('file'), async (req, res) => {
