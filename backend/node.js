@@ -50,9 +50,7 @@ async function setupConnection() {
       conn.once('open',()=>{
         gridFSBucket =new mongoose.mongo.GridFSBucket(conn.db,{bucketName:'fs'})
         gfs = grid(conn.db,mongoose.mongo)
-        gfs.collection('fs')
-        console.log('success...')
-    
+        gfs.collection('fs')    
     })
     } catch (e) {
       console.error(e);
