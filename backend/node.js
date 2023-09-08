@@ -8,6 +8,8 @@ const socket = require('socket.io')
 const dotenv = require('dotenv')
 
 const multer = require( "multer");
+const GridFsStorage = require('multer-gridfs-storage');
+const grid = require('gridfs-stream')
 
 dotenv.config()
 
@@ -16,21 +18,36 @@ const URL = process.env.url
 //Using MiddleWares
 app.use(cors());
 app.use(bodyParser.json());
-const upload =  multer({dest:'uploads'});
+
+
 
 
 // Connecting MONGODB
-async function main(){
-    try{
-    mongoose.connect(URL,{
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-    console.log('db connected');
-    }
-    catch(e){console.error(e)}
-}
-main();
+mongoose.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((err) => {
+    console.error('MongoDB connection error:', err);
+  });
+
+let gfs
+const conn =mongoose.connection
+conn.once('open',()=>{
+    gfs = grid(conn.db,mongoose.mongo)
+    gfs.collection('fs')
+
+})
+
+const storage= new GridFsStorage({
+    url:URL,
+    options:{useUnifiedTopology:true, useNewUrlParser:true },
+    file :(req,file)=>{return {filename: Date.now()+'-file-'+file.originalname , bucktName:'fs'}}
+})
+
+
+
+const upload =  multer({storage});
   
 
 //User SignIn
@@ -75,14 +92,7 @@ const chatSchema = new mongoose.Schema({
     msg : [ { room : String , content : [{senderid:String, sendername:String, body:String , filename:String, msgType:String, timestamp:String , status:String}] } ]
 });
 const Chat = mongoose.model('Chat',chatSchema);
- 
-//FileSchema
-const fileSchema = new mongoose.Schema({
-    path:String,
-    name :String
-})
 
-const File = mongoose.model('files' , fileSchema)
 
 app.post('/loginuser',async (req,res)=>{
     const existingUser = await User.findOne({userid : req.body.sub })
@@ -201,21 +211,16 @@ app.post('/friendList',async (req,res)=>{
 
 //Upload and Display Files  
 app.post('/uploadFile',upload.single('file'),async (req,res)=>{
-    
-    const fileObj ={
-        path:req.file.path ,
-        name:req.file.originalname
-    }
-    const file =  await File.create(fileObj)
-    const imgUrl = 'https://chatapp-backend-poxg.onrender.com/file' + file._id 
+    const imgUrl = "http://localhost:8080/file/"+req.file.filename
     res.json(imgUrl)
 
 })
 
-
-app.get('/file/:fileId',async(req,res)=>{
-    const file = await File.findById(req.params.fileId)
-    res.download(file.path,file.name)
+app.get('/file/:filename',async(req,res)=>{
+    // const file =await gfs.files.findOne({filename:req.params.filename})
+    if (file)
+    {const readStream = gfs.createReadStream({filename:req.params.filename});
+    readStream.pipe(res)}
 })
 
 //Save Msg to ChatDB
