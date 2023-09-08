@@ -29,7 +29,7 @@ const storage = new GridFsStorage({
     url: URL,
     file: (req, file) => {
       return { filename: Date.now() + '-file-' + file.originalname };
-    },
+    }
   });
 
 const upload =  multer({storage});
@@ -45,20 +45,16 @@ async function setupConnection() {
   
       conn = mongoose.connection;
       conn.once('open',()=>{
-        console.log(conn.db)
-        gridFSBucket =new mongoose.mongo.GridFSBucket(conn.db,{
-            bucketName:'fs'
-        })
+        gridFSBucket =new mongoose.mongo.GridFSBucket(conn.db,{bucketName:'fs'})
         gfs = grid(conn.db,mongoose.mongo)
         gfs.collection('fs')
+        console.log('success...')
     
     })
     } catch (e) {
       console.error(e);
     }
   }
-  
-  // Invoke the setupConnection function to establish the connection
   setupConnection();
 
 
@@ -225,6 +221,7 @@ app.post('/friendList',async (req,res)=>{
 
 //Upload and Display Files  
 app.post('/uploadFile',upload.single('file'),async (req,res)=>{
+    console.log(req.file)
     const imgUrl = "https://chatapp-backend-poxg.onrender.com/file/"+req.file.filename
     res.json(imgUrl)
 
