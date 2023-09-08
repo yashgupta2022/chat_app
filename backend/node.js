@@ -8,7 +8,7 @@ const socket = require('socket.io')
 const dotenv = require('dotenv')
 
 const multer = require( "multer");
-const GridFsStorage = require('multer-gridfs-storage');
+const {GridFsStorage} = require('multer-gridfs-storage');
 const grid = require('gridfs-stream')
 
 dotenv.config()
