@@ -7,9 +7,6 @@ const mongoose = require('mongoose')
 const socket = require('socket.io')
 const dotenv = require('dotenv')
 const multer = require( "multer");
-const path= require('path')
-const fs= require('fs')
-
 
 dotenv.config()
 
@@ -25,41 +22,37 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, path.join(__dirname,'backend', 'uploads')); // Adjust the destination folder as needed
-    },
-    filename: function (req, file, cb) {
-      cb(null, Date.now() + '-' + file.originalname);
-    },
-  });
-  
-  const upload = multer({ storage: storage });
+const storage= new GridFsStorage({
+    url:URL,
+    options:{useUnifiedTopology:true, useNewUrlParser:true },
+    file :(req,file)=>{return {filename: Date.now()+'-file-'+file.originalname}}
+})
 
-  
 
-let gfs,gridFSBucket,conn
-async function setupConnection() {  
-    try {
-      mongoose.connect(URL, {
+
+const upload =  multer({storage});
+let gfs,gridFSBucket
+const conn =mongoose.connection
+conn.once('open',()=>{
+    gridFSBucket =new mongoose.mongo.GridFSBucket(conn.db,{
+        bucketName:'fs'
+    })
+    gfs = grid(conn.db,mongoose.mongo)
+    gfs.collection('fs')
+
+})
+// Connecting MONGODB
+async function main(){
+    try{
+    mongoose.connect(URL,{
         useNewUrlParser: true,
         useUnifiedTopology: true,
       });
-      console.log('db connected');
-    } catch (e) {
-      console.error(e);
+    console.log('db connected');
     }
-  }
-  setupConnection();
-
-  //FileSchema
-  const fileSchema = new mongoose.Schema({
-    filename: String,
-    originalname: String,
-    // Add other metadata fields as needed
-  });
-  
-  const File = mongoose.model('File', fileSchema);
+    catch(e){console.error(e)}
+}
+main();
   
 
     //User SignIn
@@ -223,43 +216,22 @@ app.post('/friendList',async (req,res)=>{
 });
 
 
-// Upload and Display Files  
 
 
+//Upload and Display Files  
+app.post('/uploadFile',upload.single('file'),async (req,res)=>{
+    const imgUrl = "http://localhost:8080/file/"+req.file.filename
+    res.json(imgUrl)
+
+})
 
 
-app.post('/uploadFile', upload.single('file'), async (req, res) => {
-    try {
-      console.log(req.file.filename, 'uploaded.');
-  
-      // Save metadata to the database
-      const fileMetadata = new File({
-        filename: req.file.filename,
-        originalname: req.file.originalname,
-        // Add other metadata fields as needed
-      });
-  
-      await fileMetadata.save();
-      const filePath = path.join(__dirname,'backend', 'uploads', req.file.filename);
-  
-      res.json(filePath);
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      res.status(500).json({ error: 'Error uploading file' });
-    }
-  });
-
-
-  app.get('/file/:filename', (req, res) => {
-    const filePath = path.join(__dirname,'backend', 'uploads', req.params.filename);
-    const fileExists = fs.existsSync(filePath);
-  
-    if (fileExists) {
-      res.sendFile(filePath);
-    } else {
-      res.status(404).json({ error: 'File not found' });
-    }
-  });
+app.get('/file/:filename',async(req,res)=>{
+    const file =await gfs.files.findOne({filename:req.params.filename})
+    if (file)
+    {const readStream =gridFSBucket.openDownloadStream(file._id);
+    readStream.pipe(res)}
+})
 
 //Save Msg to ChatDB
  app.post('/sendMsg',async (req,res)=>{
