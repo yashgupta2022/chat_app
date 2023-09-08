@@ -28,8 +28,11 @@ app.use(bodyParser.json());
 const storage = new GridFsStorage({
     url: URL.toString(),
     file: (req, file) => {
-      return { filename: Date.now() + '-file-' + file.originalname };
-    }
+      return {
+        filename: Date.now() + '-file-' + file.originalname,
+        bucketName: 'fs', 
+      };
+    },
   });
 
 const upload =  multer({storage:storage});
