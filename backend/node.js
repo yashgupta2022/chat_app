@@ -28,6 +28,7 @@ app.use(bodyParser.json());
 const storage = new GridFsStorage({
     url: URL,
     file: (req, file) => {
+        console.log('File is being uploaded:', file.originalname);
       return {
         filename: Date.now() + '-file-' + file.originalname,
         bucketName: 'fs', 
@@ -222,26 +223,13 @@ app.post('/friendList',async (req,res)=>{
 });
 
 
-//Upload and Display Files  
-// app.post('/uploadFile',upload.single('file'),async (req,res)=>{
-//     console.log(req.file.filename , "here....")
-//     const imgUrl = "https://chatapp-backend-poxg.onrender.com/file/"+req.file.filename
-//     res.json(imgUrl)
+// Upload and Display Files  
+app.post('/uploadFile',upload.single('file'),async (req,res)=>{
+    console.log(req.file.filename , "here....")
+    const imgUrl = "https://chatapp-backend-poxg.onrender.com/file/"+req.file.filename
+    res.json(imgUrl)
 
-// })
-app.post('/uploadFile', upload.single('file'), async (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ error: 'No file uploaded.' });
-      }
-      console.log(req.file.filename, 'here....');
-      const imgUrl = `/file/${req.file.filename}`;
-      return res.json(imgUrl);
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      return res.status(500).json({ error: 'Internal server error.' });
-    }
-  });
+})
 
 
 app.get('/file/:filename',async(req,res)=>{
