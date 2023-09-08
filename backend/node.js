@@ -255,7 +255,7 @@ app.post('/uploadFile', upload.single('file'), async (req, res) => {
 
 
   app.get('/file/:filename', (req, res) => {
-    const filePath = path.join(__dirname,,'backend', 'uploads', req.params.filename);
+    const filePath = path.join(__dirname,'backend', 'uploads', req.params.filename);
     const fileExists = fs.existsSync(filePath);
   
     if (fileExists) {
