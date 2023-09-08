@@ -244,7 +244,7 @@ app.post('/uploadFile', upload.single('file'), async (req, res) => {
       });
   
       await fileMetadata.save();
-      const filePath = path.join(__dirname, 'uploads', req.file.filename);
+      const filePath = path.join(__dirname,'backend', 'uploads', req.file.filename);
   
       res.json(filePath);
     } catch (error) {
@@ -255,7 +255,7 @@ app.post('/uploadFile', upload.single('file'), async (req, res) => {
 
 
   app.get('/file/:filename', (req, res) => {
-    const filePath = path.join(__dirname, 'uploads', req.params.filename);
+    const filePath = path.join(__dirname,,'backend', 'uploads', req.params.filename);
     const fileExists = fs.existsSync(filePath);
   
     if (fileExists) {
