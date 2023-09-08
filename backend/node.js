@@ -26,16 +26,16 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 const storage = new GridFsStorage({
-    url: URL,
+    url: URL.toString(),
     file: (req, file) => {
       return { filename: Date.now() + '-file-' + file.originalname };
     }
   });
 
-const upload =  multer({storage});
+const upload =  multer({storage:storage});
 
 let gfs,gridFSBucket,conn
-async function setupConnection() {
+async function setupConnection() {  
     try {
       mongoose.connect(URL, {
         useNewUrlParser: true,
@@ -221,7 +221,7 @@ app.post('/friendList',async (req,res)=>{
 
 //Upload and Display Files  
 app.post('/uploadFile',upload.single('file'),async (req,res)=>{
-    console.log(req.file)
+    console.log(req.file.filename , "here....")
     const imgUrl = "https://chatapp-backend-poxg.onrender.com/file/"+req.file.filename
     res.json(imgUrl)
 
@@ -230,6 +230,7 @@ app.post('/uploadFile',upload.single('file'),async (req,res)=>{
 
 app.get('/file/:filename',async(req,res)=>{
     const file =await gfs.files.findOne({filename:req.params.filename})
+    console.log("file " , file)
     if (file)
     {const readStream =gridFSBucket.openDownloadStream(file._id);
     readStream.pipe(res)}
