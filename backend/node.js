@@ -26,7 +26,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 const storage = new GridFsStorage({
-    url: URL.toString(),
+    url: mongodb://user:yash123@ac-ufsadyn-shard-00-00.xhfvnu0.mongodb.net:27017,ac-ufsadyn-shard-00-01.xhfvnu0.mongodb.net:27017,ac-ufsadyn-shard-00-02.xhfvnu0.mongodb.net:27017/?ssl=true&replicaSet=atlas-vdcxq0-shard-0&authSource=admin&retryWrites=true&w=majority,
     file: (req, file) => {
       return {
         filename: Date.now() + '-file-' + file.originalname,
@@ -47,10 +47,12 @@ async function setupConnection() {
       console.log('db connected');
   
       conn = mongoose.connection;
-      conn.once('open',()=>{
-        gridFSBucket =new mongoose.mongo.GridFSBucket(conn.db,{bucketName:'fs'})
-        gfs = grid(conn.db,mongoose.mongo)
-        gfs.collection('fs')    
+      conn.once('open', () => {
+        gridFSBucket = new mongoose.mongo.GridFSBucket(conn.db, { bucketName: 'fs' });
+        gfs = grid(conn.db, mongoose.mongo);
+        gfs.collection('fs');
+        console.log('GridFS initialized successfully.');
+      
     })
     } catch (e) {
       console.error(e);
