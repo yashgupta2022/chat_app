@@ -26,13 +26,13 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 const storage = new GridFsStorage({
-    url: mongodb://user:yash123@ac-ufsadyn-shard-00-00.xhfvnu0.mongodb.net:27017,ac-ufsadyn-shard-00-01.xhfvnu0.mongodb.net:27017,ac-ufsadyn-shard-00-02.xhfvnu0.mongodb.net:27017/?ssl=true&replicaSet=atlas-vdcxq0-shard-0&authSource=admin&retryWrites=true&w=majority,
+    url: 'mongodb://user:yash123@ac-ufsadyn-shard-00-00.xhfvnu0.mongodb.net:27017,ac-ufsadyn-shard-00-01.xhfvnu0.mongodb.net:27017,ac-ufsadyn-shard-00-02.xhfvnu0.mongodb.net:27017/?ssl=true&replicaSet=atlas-vdcxq0-shard-0&authSource=admin&retryWrites=true&w=majority',
     file: (req, file) => {
       return {
         filename: Date.now() + '-file-' + file.originalname,
         bucketName: 'fs', 
       };
-    },
+    }
   });
 
 const upload =  multer({storage:storage});
