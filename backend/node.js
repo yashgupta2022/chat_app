@@ -8,43 +8,17 @@ const socket = require('socket.io')
 const dotenv = require('dotenv')
 
 const multer = require( "multer");
-const {GridFsStorage} = require('multer-gridfs-storage');
-const grid = require('gridfs-stream')
 
 dotenv.config()
 
 const URL = process.env.url
 
 //Using MiddleWares
-const corsOptions = {
-    origin: 'https://frabjous-mermaid-b10de5.netlify.app', 
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-  };
-  
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(bodyParser.json());
-
-const storage= new GridFsStorage({
-    url:URL,
-    options:{useUnifiedTopology:true, useNewUrlParser:true },
-    file :(req,file)=>{return {filename: Date.now()+'-file-'+file.originalname}}
-})
+const upload =  multer({dest:'uploads'});
 
 
-console.log(storage)
-const upload =  multer({storage});
-console.log(upload)
-let gfs,gridFSBucket
-const conn =mongoose.connection
-conn.once('open',()=>{
-    gridFSBucket =new mongoose.mongo.GridFSBucket(conn.db,{
-        bucketName:'fs'
-    })
-    gfs = grid(conn.db,mongoose.mongo)
-    gfs.collection('fs')
-
-})
 // Connecting MONGODB
 async function main(){
     try{
@@ -59,7 +33,7 @@ async function main(){
 main();
   
 
-    //User SignIn
+//User SignIn
 const userSchema = new mongoose.Schema({
     userid:String,
     username: String,
@@ -102,7 +76,13 @@ const chatSchema = new mongoose.Schema({
 });
 const Chat = mongoose.model('Chat',chatSchema);
  
+//FileSchema
+const fileSchema = new mongoose.Schema({
+    path:String,
+    name :String
+})
 
+const File = mongoose.model('files' , fileSchema)
 
 app.post('/loginuser',async (req,res)=>{
     const existingUser = await User.findOne({userid : req.body.sub })
@@ -219,22 +199,23 @@ app.post('/friendList',async (req,res)=>{
     } catch (error) {res.json('error');}
 });
 
-
-
-
 //Upload and Display Files  
 app.post('/uploadFile',upload.single('file'),async (req,res)=>{
-    const imgUrl = "http://localhost:8080/file/"+req.file.filename
+    
+    const fileObj ={
+        path:req.file.path ,
+        name:req.file.originalname
+    }
+    const file =  await File.create(fileObj)
+    const imgUrl = 'https://chatapp-backend-poxg.onrender.com/file' + file._id 
     res.json(imgUrl)
 
 })
 
 
-app.get('/file/:filename',async(req,res)=>{
-    const file =await gfs.files.findOne({filename:req.params.filename})
-    if (file)
-    {const readStream =gridFSBucket.openDownloadStream(file._id);
-    readStream.pipe(res)}
+app.get('/file/:fileId',async(req,res)=>{
+    const file = await File.findById(req.params.fileId)
+    res.download(file.path,file.name)
 })
 
 //Save Msg to ChatDB
