@@ -32,17 +32,9 @@ const storage= new GridFsStorage({
 })
 
 
-
+console.log(storage)
 const upload =  multer({storage});
-storage.on('connection', (db) => {
-    db.on('error', (err) => {
-        console.error('MongoDB connection error:', err);
-    });
-    db.once('open', () => {
-        console.log('MongoDB connection established');
-    });
-});
-
+console.log(upload)
 let gfs,gridFSBucket
 const conn =mongoose.connection
 conn.once('open',()=>{
