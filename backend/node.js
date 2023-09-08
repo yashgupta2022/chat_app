@@ -230,6 +230,7 @@ app.post('/uploadFile',upload.single('file'),async (req,res)=>{
 })
 
 
+
 app.get('/file/:filename',async(req,res)=>{
     const file =await gfs.files.findOne({filename:req.params.filename})
     console.log("file " , file)
