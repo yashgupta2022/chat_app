@@ -77,6 +77,7 @@ export const handleDPChange = async(e,item)=>{
       const data = new FormData();
       data.append('name',file.name)
       data.append('file',file)
+      console.log(data,file)
       const response = await axios.post(port + 'uploadFile',data);
       const res  = await axios.post(port + 'setDP',{userid:item.userid, username:item.username , type:item.type,dp:response.data});
       return response.data 
