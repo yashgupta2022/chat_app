@@ -222,11 +222,13 @@ app.post('/friendList',async (req,res)=>{
 
 
 // Upload and Display Files  
-app.post('/uploadFile',upload.single('file'),async (req,res)=>{
+
+app.post('/uploadFile',upload.single('file'), (req,res)=>{
+    try{
     console.log(req.file.filename , "here....")
     const imgUrl = "https://chatapp-backend-poxg.onrender.com/file/"+req.file.filename
-    res.json(imgUrl)
-
+    res.json(imgUrl)}
+    catch(e){console.log("ERRORsssssssss" ,e)}
 })
 
 
