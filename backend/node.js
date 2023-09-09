@@ -25,13 +25,11 @@ let gfs,gridFSBucket
     const conn =mongoose.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
     console.log('Connected to MongoDB');
-       conn.once('open',()=>{
         gridFSBucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
             bucketName: 'fs'
          });
         gfs = grid(conn.db,mongoose.mongo)
         gfs.collection('fs')
-        })
   })
   .catch((err) => {
     console.error('MongoDB connection error:', err);
@@ -41,7 +39,7 @@ let gfs,gridFSBucket
 
 const storage= new GridFsStorage({
     url:URL,
-    file :(req,file)=>{return {filename: Date.now()+'-file-'+file.originalname , bucktName:'fs'}}
+    file :(req,file)=>{if (file) {return {filename: Date.now()+'-file-'+file.originalname , bucktName:'fs'}}}
 })
 const upload =  multer({storage});
   
