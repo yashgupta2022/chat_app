@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 
 let gfs,gridFSBucket
 // Connecting MONGODB
-    const conn =await mongoose.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true })
+    const conn = mongoose.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
     
         console.log('Connected to MongoDB');
