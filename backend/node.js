@@ -30,14 +30,15 @@ let gfs,gridFSBucket
     console.error('MongoDB connection error:', err);
   });
 
-  conn.once('open',()=>{
+  
+const conn = mongoose.connect
+conn.once('open',()=>{
     gridFSBucket = new mongoose.mongo.GridFSBucket(conn.db, {
         bucketName: 'fs'
      });
     gfs = grid(conn.db,mongoose.mongo)
     gfs.collection('fs')
     })
-const conn = mongoose.connect
 
 const storage= new GridFsStorage({
     url:URL,
