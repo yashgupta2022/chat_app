@@ -20,32 +20,39 @@ app.use(cors());
 app.use(bodyParser.json());
 
 
-let gfs,gridFSBucket
-// Connecting MONGODB
-    mongoose.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => {
-    console.log('Connected to MongoDB');
-  })
-  .catch((err) => {
-    console.error('MongoDB connection error:', err);
-  });
-
-  
-const conn = mongoose.connect
-conn.once('open',()=>{
-    gridFSBucket = new mongoose.mongo.GridFSBucket(conn.db, {
-        bucketName: 'fs'
-     });
-    gfs = grid(conn.db,mongoose.mongo)
-    gfs.collection('fs')
-    })
-
 const storage= new GridFsStorage({
     url:URL,
-    file :(req,file)=>{if (file){ return {filename: Date.now()+'-file-'+file.originalname , bucktName:'fs'}}}
+    options:{useUnifiedTopology:true, useNewUrlParser:true },
+    file :(req,file)=>{return {filename: Date.now()+'-file-'+file.originalname}}
 })
-const upload =  multer({storage});
-  
+
+let upload
+if (storage){
+ upload =  multer({storage});}
+
+let gfs,gridFSBucket
+const conn =mongoose.connection
+conn.once('open',()=>{
+    gridFSBucket =new mongoose.mongo.GridFSBucket(conn.db,{
+        bucketName:'fs'
+    })
+    gfs = grid(conn.db,mongoose.mongo)
+    gfs.collection('fs')
+
+})
+// Connecting MONGODB
+async function main(){
+    try{
+    mongoose.connect(URL,{
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+    console.log('db connected');
+    }
+    catch(e){console.error(e)}
+}
+main();
+
 
 //User SignIn
 const userSchema = new mongoose.Schema({
