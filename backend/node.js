@@ -20,33 +20,29 @@ app.use(cors());
 app.use(bodyParser.json());
 
 
-
-
+let gfs,gridFSBucket
 // Connecting MONGODB
-mongoose.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
+    const conn =mongoose.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
     console.log('Connected to MongoDB');
+       conn.once('open',()=>{
+        gridFSBucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+            bucketName: 'fs'
+         });
+        gfs = grid(conn.db,mongoose.mongo)
+        gfs.collection('fs')
+        })
   })
   .catch((err) => {
     console.error('MongoDB connection error:', err);
   });
 
-let gfs
-const conn =mongoose.connection
-conn.once('open',()=>{
-    gfs = grid(conn.db,mongoose.mongo)
-    gfs.collection('fs')
 
-})
 
 const storage= new GridFsStorage({
     url:URL,
-    options:{useUnifiedTopology:true, useNewUrlParser:true },
     file :(req,file)=>{return {filename: Date.now()+'-file-'+file.originalname , bucktName:'fs'}}
 })
-
-
-
 const upload =  multer({storage});
   
 
@@ -211,16 +207,16 @@ app.post('/friendList',async (req,res)=>{
 
 //Upload and Display Files  
 app.post('/uploadFile',upload.single('file'),async (req,res)=>{
-    const imgUrl = "http://localhost:8080/file/"+req.file.filename
+    console.log(req)
+    const imgUrl = "https://chatapp-backend-poxg.onrender.com/file/"+req.file.filename
     res.json(imgUrl)
 
 })
 
 app.get('/file/:filename',async(req,res)=>{
-    // const file =await gfs.files.findOne({filename:req.params.filename})
+    const file =await gfs.files.findOne({filename:req.params.filename})
     if (file)
-    {const readStream = gfs.createReadStream({filename:req.params.filename});
-    readStream.pipe(res)}
+    {gridFSBucket.openDownloadStream({filename:req.params.filename}).pipe(res)}
 })
 
 //Save Msg to ChatDB
