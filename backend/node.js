@@ -25,10 +25,10 @@ let gfs,gridFSBucket
     const conn =mongoose.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
     console.log('Connected to MongoDB');
-        gridFSBucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+        gridFSBucket = new mongoose.mongo.GridFSBucket(conn.db, {
             bucketName: 'fs'
          });
-        gfs = grid(conn.db,mongoose.mongo)
+        gfs = new grid(conn.db,mongoose.mongo)
         gfs.collection('fs')
   })
   .catch((err) => {
