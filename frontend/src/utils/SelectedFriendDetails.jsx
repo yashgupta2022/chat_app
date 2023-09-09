@@ -166,11 +166,11 @@ const SelectedFriendDetails = ({item ,setItem, showfriendList,showMessages})=>{
                         onChange={e=>{setInput(e.target.value)}} value={input} placeholder='Enter UserID' />
                     </Form>
                     </ListGroup.Item>
-                    <input  id='inputDP'  style={{display:'none'}}  type="file" onChange={handleChangeDP} />
+                    {/* <input  id='inputDP'  style={{display:'none'}}  type="file" onChange={handleChangeDP} />
                     
                         <label htmlFor='inputDP'>
                          <ListGroup.Item style={{marginTop:-1,marginBottom:-10  }}  type='button' >Change Group Icon</ListGroup.Item>
-                        </label>
+                        </label> */}
                     
                     </>:<></>
                     }
