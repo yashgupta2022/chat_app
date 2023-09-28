@@ -1,20 +1,20 @@
-  import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useState } from 'react';
-import { Col, Form, Row } from 'react-bootstrap';
+import { Col, Container, Form, Row } from 'react-bootstrap';
 import axios from 'axios';
-import { port } from './io';
+
 import socket from './io';
 import Home from '../components/Home';
 import SelectedFriendDetails from './SelectedFriendDetails';
 import MsgTemplate from "./MsgTemplate";
 import {datetime, updateFriendList} from './API';
-
+import { port } from './io';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSmile,faPaperPlane, faPaperclip } from '@fortawesome/free-solid-svg-icons'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 
-const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item})=>{
+const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item, screen, back , setback})=>{
 
     const {userid} =useParams();
     const [msginput,setmsgInput] =useState('');
@@ -38,7 +38,7 @@ const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item})
             const data = new FormData();
             data.append('name',file.name)
             data.append('file',file)
-            const response = await axios.post(port + 'uploadFile',data);
+            const response = await axios.post(port+'uploadFile',data);
             msg = {senderid : userid , room : item.room, name:item , msgType:'file', body:response.data, filename:file.name, timestamp: datetime()}
             flag=1
           } 
@@ -48,7 +48,7 @@ const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item})
           }
   
           if (flag===1){
-            const response = await axios.post(port + 'sendMsg',msg);
+            const response = await axios.post(port+'sendMsg',msg);
             updateFriendList(userid , msg.room)
             showfriendList()
             setMsgs([...Msgs,{...msg,status:'Delivered'}])
@@ -60,15 +60,13 @@ const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item})
     }
 
     
-
-
-    return <Col xs = {8} md={9}  className='message-area'>
+    return <>
         <div  hidden={item.username!=='No Chat Selected' }>
-          <Home  style={{paddingTop:0}} hide={true}/>
+          <Container fluid style={{paddingTop:0}} className='home'><Home hide={true}/></Container>
         </div>
         <div hidden={item.username==='No Chat Selected'}>
           
-          <SelectedFriendDetails item={item} setItem={setItem} showfriendList={showfriendList} showMessages={showMessages}  />
+          <SelectedFriendDetails item={item} setItem={setItem} showfriendList={showfriendList} showMessages={showMessages} screen = {screen} back = {back} setback = {setback}  />
 
           <Row  className='no-gutters message-display '>
             <Col >
@@ -84,11 +82,11 @@ const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item})
             
           <Row className ="message-input no-gutters">
             <Col xs={2}  md={1} className="icons" >
-              <FontAwesomeIcon  type='button'  onClick={()=>setEmoji(!emojiHide)}   icon={faSmile} size="2xl" style={{color: "white"} }/>
+              <FontAwesomeIcon className="fontawesome"  type='button'  onClick={()=>setEmoji(!emojiHide)}   icon={faSmile} size="2xl" style={{color: "white"} }/>
             </Col>
             <Col xs={2} md={1} className="icons">
               {/* <label htmlFor="fileInput">
-                <FontAwesomeIcon  type='button' icon={faPaperclip} size="2xl" style={{color: "white", marginTop:8} } />
+                <FontAwesomeIcon className="fontawesome" type='button' icon={faPaperclip} size="2xl" style={{color: "white", marginTop:8} } />
               </label>
               <input type="file" id="fileInput" style={{ display: "none" }} onChange={handleFileChange}/> */}
             </Col>
@@ -98,11 +96,11 @@ const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item})
               </Form>
             </Col>
             <Col xs={2} md={1}  className="icons">
-              <FontAwesomeIcon  onClick={msghandleSubmit} type='button' icon={faPaperPlane} size="2xl" style={{color: "white"}} />
+              <FontAwesomeIcon className="fontawesome"  onClick={msghandleSubmit} type='button' icon={faPaperPlane} size="2xl" style={{color: "white"}} />
             </Col>
           </Row>
         </div>
-    </Col>
+    </>
 
 }
 

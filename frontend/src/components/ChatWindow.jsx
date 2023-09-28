@@ -88,23 +88,49 @@ function ChatWindow(){
 
     socket.on('update-friendList',()=>{showfriendList()})
   },[])
+  
 
 
+  const [show, setShow] = useState(true);
+  const [screen, setScreen] = useState(window.screen.availWidth);
+  function handleResize() {
+    setScreen(window.screen.availWidth);
+  }
+
+  
+  useEffect(()=>{window.addEventListener('resize', handleResize);},[])
 
       return  <Container fluid className='px-0 chat-window'>
-        <Row className="no-gutters h-100"  >
-
+        {screen<450 ? <>
+        <Row className='no-gutters h-100 ' >
+        <Col className={!show ? 'd-none' : ''} >
           <FriendList setItem={setItem} 
             friendList={friendList} showfriendList={showfriendList}
             individualFriends={individualFriends} showMessages={showMessages} handleLogout={handleLogout}
-            resultantUsers={resultantUsers}
-            
-          />
-
+            resultantUsers={resultantUsers} setShow={setShow}
+          /></Col>
+          <Col className={show ? 'd-none message-area' : 'message-area'} >
           <Messages Msgs ={Msgs} setMsgs ={setMsgs} 
-          showfriendList ={showfriendList} item={item}   setItem={setItem} showMessages={showMessages} />
+          showfriendList ={showfriendList} item={item} setItem={setItem} showMessages={showMessages} screen={screen}  back = {show} setback = {setShow}
+          /></Col>
 
-      </Row>
+      </Row></>
+      :
+      <Row className='no-gutters h-100 ' >
+        
+        <Col xs={3}>
+          <FriendList setItem={setItem} 
+            friendList={friendList} showfriendList={showfriendList}
+            individualFriends={individualFriends} showMessages={showMessages} handleLogout={handleLogout}
+            resultantUsers={resultantUsers} setShow={setShow}
+          /></Col>
+          <Col xs={9} >
+          <Messages Msgs ={Msgs} setMsgs ={setMsgs} 
+          showfriendList ={showfriendList} item={item} setItem={setItem} showMessages={showMessages}
+          /></Col>
+
+      </Row>}
+
       </Container>
 
 }

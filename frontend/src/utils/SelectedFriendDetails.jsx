@@ -7,10 +7,11 @@ import { onlineUsers,handleDPChange,getLastMessage , fetchDP, getallfriends } fr
 import socket from './io';
 import ShowImage from "./ShowImage";
 import { port } from "./io";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faEllipsisVertical} from '@fortawesome/free-solid-svg-icons'
 
-const SelectedFriendDetails = ({item ,setItem, showfriendList,showMessages})=>{
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {faArrowLeft, faEllipsisVertical} from '@fortawesome/free-solid-svg-icons'
+
+const SelectedFriendDetails = ({item ,setItem, showfriendList,showMessages, screen, back , setback})=>{
     
     const {userid} = useParams();
     const [friendlist,setList] = useState('');
@@ -50,12 +51,12 @@ const SelectedFriendDetails = ({item ,setItem, showfriendList,showMessages})=>{
         e.preventDefault();
         if (input!=='' && input!==userid){
           // Check Friend in FriendDB
-            const response1 = await axios.post(port + 'check-friend',{userid: input})
+            const response1 = await axios.post(port+'check-friend',{userid: input})
             let f_list = await getallfriends(item.room) ,fl=[]
             f_list.forEach(i=>fl.push(i.userid))    
             if (response1.data==="success" ){
                 if (!fl.some(i=>i===input)){
-                    await axios.post(port + 'addFriendinGrp',{item:item, newFriend:input})
+                    await axios.post(port+'addFriendinGrp',{item:item, newFriend:input})
                     socket.emit('show-friendlist' ,[...fl,input])
                 }
                 else {alert('Friend Already in Group')}
@@ -74,15 +75,16 @@ const SelectedFriendDetails = ({item ,setItem, showfriendList,showMessages})=>{
             const f = await getallfriends(item.room);
             f.forEach(i=>fl.push(i.userid))    
         }
-        await axios.post(port + 'exitGrp',{userid,item})
+        await axios.post(port+'exitGrp',{userid,item})
         setDrop(true)
         setItem({userid:'', username: 'No Chat Selected',type:"" ,room:''})
+        setback(!back);
         if (item.type==='individual'){showfriendList();socket.emit('deleted-friendlist' ,item.userid,userid)}
         else {socket.emit('show-friendlist' ,fl)}
     }
     
     const deleteChat =async()=>{
-        await axios.post(port + 'deleteChat',{userid,item})
+        await axios.post(port+'deleteChat',{userid,item})
         setDrop(true)
         showMessages(item.room)
         getlastmsg();
@@ -145,10 +147,11 @@ const SelectedFriendDetails = ({item ,setItem, showfriendList,showMessages})=>{
 
     return (
         <Row  className="no-gutters Display-friendInfo">
-            <Col xs={3} sm={2}  lg={1}  className="d-flex justify-content-center ">
+            {screen<450?<Col xs={1} classname='d-flex justify-content-center'> <FontAwesomeIcon className="backbtn fontawesome" icon={faArrowLeft} size="xl" onClick={()=>setback(!back)} /></Col>:""}
+            <Col xs={3} sm={2}  lg={1}  className="d-flex justify-content-center ">  
                 <ShowImage dp={dp} />
             </Col>
-            <Col xs={7} sm={8} lg={10}>
+            <Col xs={screen<450?6:7} sm={8} lg={10}>
                 <Row className="no-gutters " style={{height:30,marginTop:4}}> 
                     <p style={{fontSize:'larger'}}>{item.username}</p>
                 </Row>
@@ -182,17 +185,10 @@ const SelectedFriendDetails = ({item ,setItem, showfriendList,showMessages})=>{
 
                 <Col xs={2} sm ={2} lg={1} className=' my-0 d-flex justify-content-center align-items-center' >
                         <button ref={buttonRef} onClick={()=>setDrop(!dropDown)} style={{border:0 ,outline:'none'}} >
-                            <FontAwesomeIcon  color='#1e3050' icon={faEllipsisVertical} size='2xl' /> 
+                            <FontAwesomeIcon  className="fontawesome" color='#1e3050' icon={faEllipsisVertical} size='2xl' /> 
                         </button>
                     </Col>     
                     
-                    
-
-
-
-
-
-
         </Row>
     )
 }

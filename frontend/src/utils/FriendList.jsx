@@ -1,18 +1,18 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
-import {Button, Col, Container, Form, ListGroup, Row } from 'react-bootstrap';
+import {Col, Container, Form, ListGroup, Row } from 'react-bootstrap';
 import axios from 'axios';
-import { port } from '../utils/io';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faEllipsisVertical, faPaperPlane} from '@fortawesome/free-solid-svg-icons'
+import { faEllipsisVertical, faPaperPlane} from '@fortawesome/free-solid-svg-icons'
 
 import socket from '../utils/io';
 import FriendInfo from './FriendInfo'
 import ShowImage from './ShowImage';
 import { handleDPChange ,getRoom, fetchDP} from './API';
-
-const FriendList =({setItem,friendList,individualFriends,showMessages,showfriendList,handleLogout,resultantUsers})=>{
+import { port } from '../utils/io';
+const FriendList =({item,setItem,friendList,individualFriends,showMessages,showfriendList,
+  handleLogout,resultantUsers,setShow})=>{
     const {userid} =useParams();
     const [input,setInput] = useState('')
     const [search,setSearch] = useState('')
@@ -79,7 +79,9 @@ const FriendList =({setItem,friendList,individualFriends,showMessages,showfriend
       if (i.username!=='No Friends Added'){
       let room = getRoom(i,userid);
       showMessages(room);    
-      setItem({...i,room:room})}
+      setItem({...i,room:room})
+      setShow(false )
+    }
   }
 
   const handleCheckBox = async (friend)=>{
@@ -98,12 +100,12 @@ const FriendList =({setItem,friendList,individualFriends,showMessages,showfriend
       setDisable(true);
       setTimeout(async() => {
         // Check Friend in FriendDB
-        const response = await axios.post(port + 'check-friend',{userid : friend.userid})
+        const response = await axios.post(port+'check-friend',{userid : friend.userid})
           if (response.data==="success"){
               // Add Friend in FriendDB -> user->friend  and friend->user
               let room  = getRoom({...friend,type:'individual'} ,userid)
               const obj = {type:'individual', room , friendList : [friend.userid,userid] };
-              const response2 = await axios.post(port + 'add-friend',obj)
+              const response2 = await axios.post(port+'add-friend',obj)
               if (response2.data==="success"){
                 setOpen(1)
                 socket.emit('show-friendlist', obj.friendList)
@@ -121,11 +123,11 @@ const FriendList =({setItem,friendList,individualFriends,showMessages,showfriend
       else if (room==='') alert ('Group must have a name')
 
       else { //Group name must be Unique
-        const response =await axios.post(port + 'check-group-name',{group: room})
+        const response =await axios.post(port+'check-group-name',{group: room})
         if (response.data==="fail"){ alert("Enter Unique Group Name") }
         else{
           const obj = {room:room , friendList : [...group,userid] ,type : 'group'};
-          const response2 = await axios.post(port + 'add-friend',obj)
+          const response2 = await axios.post(port+'add-friend',obj)
             if (response2.data==="success"){
               setOpen(1)
               showfriendList()
@@ -147,16 +149,17 @@ const FriendList =({setItem,friendList,individualFriends,showMessages,showfriend
     return () => {document.removeEventListener('click',handleOutsideClick);};
   }, []);
 
-    return ( <Col xs={4} md={3} className='left-col' style={{borderRight:'1px lightgrey solid' }} >
+
+  return (<>
         <Row className='no-gutters'>
             <Col className='Display-friendInfo'>
                 <Row className='no-gutters'>
                     <Col xs={10} style={{paddingLeft:10}}>
-                        <ShowImage dp={dp} />
+                    <ShowImage dp={dp} />
                     </Col>
                     <Col xs={2}  className=' my-0 d-flex justify-content-center align-items-center' >
                         <button ref={buttonRef} onClick={()=>setDrop(!dropDown)} style={{border:0 ,outline:'none'}} >
-                            <FontAwesomeIcon  color='#1e3050' icon={faEllipsisVertical} size='2xl' /> 
+                            <FontAwesomeIcon className="fontawesome" color='#1e3050' icon={faEllipsisVertical} size='2xl' /> 
                         </button>
                             <div hidden={dropDown}  >
                             <ListGroup  className='dropDown' style={{ maxWidth:'400%'}}>
@@ -219,7 +222,7 @@ const FriendList =({setItem,friendList,individualFriends,showMessages,showfriend
             name='room' onChange={(e)=>{setRoom(e.target.value)}} placeholder ="Enter Group Name" /></Col>
 
             <Col xs={2} style={{ color:'white'}} className='d-flex justify-content-center align-items-center' onClick={handleGroupSubmit}>
-              <FontAwesomeIcon type='button'  size='2xl' icon={faPaperPlane}  /></Col>
+              <FontAwesomeIcon type='button' className='fontawesome'  size='2xl' icon={faPaperPlane}  /></Col>
           </Row>
             
             <Container style={{width:'100%'}} className='px-0 mx-0 scrollable-list '>
@@ -259,7 +262,7 @@ const FriendList =({setItem,friendList,individualFriends,showMessages,showfriend
 
 
 
-    </Col>
+    </>
     )
 }
 export default FriendList;
