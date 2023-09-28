@@ -47,6 +47,9 @@ a{
 }
 
 .home-img{
+    @media (max-height:400px) {
+        display: none;        
+    }
     width: 50%;
     margin-bottom: 1%;
     height:50vh;
