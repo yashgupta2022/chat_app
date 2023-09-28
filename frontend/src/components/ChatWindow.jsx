@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {Container, Row } from 'react-bootstrap';
+import {Container, Row ,Col } from 'react-bootstrap';
 import socket from '../utils/io';
 
 import FriendList from '../utils/FriendList';
