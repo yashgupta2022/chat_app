@@ -120,13 +120,13 @@ app.post('/register', async (req, res) => {
         const existingUser = await User.findOne({ email: req.body.email });
         if (!existingUser) {
             const newUser = new User({
-                userid: req.body.userid.toString(),
+                userid: req.body.userid,
                 username: req.body.username,
                 email: req.body.email,
                 password: req.body.password
             });
             await newUser.save();
-            res.json(req.body.userid.toString())
+            res.json(req.body.userid)
         } else {
             res.json('fail')
         }
@@ -141,7 +141,7 @@ app.post('/login', async (req, res) => {
         if (!existingUser) {
             res.json('fail')
         } else {
-            res.json(existingUser.userid.toString())
+            res.json(existingUser.userid)
         }
     } catch (error) {
         console.error('Error in /login:', error);
