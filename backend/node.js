@@ -11,8 +11,6 @@ const aws = require('aws-sdk')
 const { v4: uuidv4 } = require('uuid');
 dotenv.config()
 
-
-
 // Using Middlewares
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -299,7 +297,7 @@ app.get('/file/:filename', (req, res) => {
         }
   
         res.setHeader('Content-Type', data.ContentType);
-        res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+        res.setHeader('Content-Disposition', 'inline');
   
         data.createReadStream().pipe(res);
       });
