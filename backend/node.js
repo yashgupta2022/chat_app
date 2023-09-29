@@ -253,8 +253,6 @@ app.post('/updateFriendList', async (req, res) => {
     }
 });
 
-
-
 // Upload and Display Files
 app.post('/uploadFile', upload.single('file'), async (req, res) => {
     try {
@@ -282,30 +280,6 @@ app.post('/uploadFile', upload.single('file'), async (req, res) => {
     }
 });
 
-
-app.get('/file/:filename', (req, res) => {
-    try {
-      const filename = req.params.filename;
-      const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: filename,
-        ContentDisposition:'inline'
-      };
-  
-      s3.getObject(params, (err, data) => {
-        if (err) {
-          console.error('Error in /file/:filename:', err);
-        }
-  
-        res.setHeader('Content-Type', data.ContentType);
-        res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
-  
-        data.createReadStream().pipe(res);
-      });
-    } catch (error) {
-      console.error('Error in /file/:filename:', error);
-    }
-  });
 
 // Save Msg to ChatDB
 app.post('/sendMsg', async (req, res) => {
