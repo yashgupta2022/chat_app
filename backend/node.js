@@ -148,6 +148,33 @@ app.post('/login', async (req, res) => {
     }
 });
 
+
+const getAllUsers = async () => {
+    try {
+        const user = await User.find({});
+        if (user.length === 0) { return ([{ username: 'No Friends Added' }]); }
+        else {
+            let users = [];
+            user.forEach(item => {
+                users.push({ userid: item.userid, username: item.username });
+            });
+            return users;
+        }
+    } catch (error) {
+        console.error('Error in getAllUsers:', error);
+        return [{ username: 'No Friends Added' }];
+    }
+}
+
+app.get('/getAllUsers', async (req, res) => {
+    try {
+        const user = await getAllUsers();
+        res.json(user);
+    } catch (error) {
+        console.error('Error in /getAllUsers:', error);
+    }
+});
+
 // Check whether name exists in UserDB
 app.post('/check-friend', async (req, res) => {
     try {
