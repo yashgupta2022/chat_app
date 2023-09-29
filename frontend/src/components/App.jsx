@@ -5,7 +5,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import SignIn from "./SignIn";
 import Register from "./Register"
 function App() {
-  const CLIENT_ID =process.env.CLIENT_ID
+  const CLIENT_ID =process.env.REACT_APP_CLIENT_ID
   
   return (
     <GoogleOAuthProvider clientId={CLIENT_ID}>
