@@ -34,11 +34,13 @@ a{
     font-family: Georgia, 'Times New Roman', Times, serif;
     padding-top:2%;
     font-weight: bolder;
+    filter: drop-shadow(2px 2px 2px black); 
 }
 
 .home-tagline{
     padding:1% 0 2% 20%;
     color: white;
+    filter: drop-shadow(2px 2px 2px black);  
     
 }
 
@@ -48,7 +50,7 @@ a{
     margin-bottom: 10px;
     height:50vh;
     border-radius: 30px;
-    filter: drop-shadow(10px 10px 10px black);  
+    filter: drop-shadow(8px 8px 8px black);  
 }
 
 .backbtn{
