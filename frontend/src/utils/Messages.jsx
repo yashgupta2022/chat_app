@@ -38,7 +38,10 @@ const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item, 
             const data = new FormData();
             data.append('name',file.name)
             data.append('file',file)
-            const response = await axios.post(port+'uploadFile',data);
+            const response = await axios.post(port+'uploadFile',data, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              }});
             msg = {senderid : userid , room : item.room, name:item , msgType:'file', body:response.data, filename:file.name, timestamp: datetime()}
             flag=1
           } 
