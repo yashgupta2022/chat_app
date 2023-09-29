@@ -34,7 +34,7 @@ a{
     font-family: Georgia, 'Times New Roman', Times, serif;
     padding-top:2%;
     font-weight: bolder;
-    filter: drop-shadow(2px 2px 2px black); 
+    filter: drop-shadow(1px 1px 1px black); 
 }
 
 .home-tagline{
