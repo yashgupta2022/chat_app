@@ -297,6 +297,7 @@ app.get('/file/:filename', (req, res) => {
         }
   
         res.setHeader('Content-Type', data.ContentType);
+        res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
   
         data.createReadStream().pipe(res);
       });
