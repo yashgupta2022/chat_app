@@ -11,34 +11,44 @@ const multer = require("multer");
 const { GridFsStorage } = require('multer-gridfs-storage');
 const grid = require('gridfs-stream')
 
+const aws = require('aws-sdk')
+const { v4: uuidv4 } = require('uuid');
+const { runInNewContext } = require("vm");
 dotenv.config()
 
 const URL = process.env.url
 
 // Using Middlewares
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ extended: true }));
 
-const storage = new GridFsStorage({
-    url: URL,
-    options: { useUnifiedTopology: true, useNewUrlParser: true },
-    file: (req, file) => { return { filename: Date.now() + '-file-' + file.originalname } }
-})
+// const storage = new GridFsStorage({
+//     url: URL,
+//     options: { useUnifiedTopology: true, useNewUrlParser: true },
+//     file: (req, file) => { return { filename: Date.now() + '-file-' + file.originalname } }
+// })
 
-let upload
-if (storage) {
-    upload = multer({ storage });
-}
+// let upload
+// if (storage) {
+//     upload = multer({ storage });
+// }
 
-let gfs, gridFSBucket
-const conn = mongoose.connection
-conn.once('open', () => {
-    gridFSBucket = new mongoose.mongo.GridFSBucket(conn.db, {
-        bucketName: 'fs'
-    })
-    gfs = grid(conn.db, mongoose.mongo)
-    gfs.collection('fs')
-})
+// let gfs, gridFSBucket
+// const conn = mongoose.connection
+// conn.once('open', () => {
+//     gridFSBucket = new mongoose.mongo.GridFSBucket(conn.db, {
+//         bucketName: 'fs'
+//     })
+//     gfs = grid(conn.db, mongoose.mongo)
+//     gfs.collection('fs')
+// })
+
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+const bucketname = process.env.AWS_BUCKETNAME
+
 
 // Connecting to MongoDB
 async function main() {
@@ -271,26 +281,60 @@ app.post('/updateFriendList', async (req, res) => {
     }
 });
 
+
+
 // Upload and Display Files
 app.post('/uploadFile', upload.single('file'), async (req, res) => {
     try {
-        const imgUrl = "https://chatapp-backend-poxg.onrender.com/file/" + req.file.filename;
-        res.json(imgUrl);
+        const s3 = new aws.S3({
+            region: process.env.aws_region,
+            accessKeyId:  process.env.aws_accesskeyid, 
+            secretAccessKey:process.env.aws_secretaccesskey ,
+            signatureVersion :"v4"
+        })
+        const params={
+            Bucket:bucketname,
+            Key : uuidv4() + req.file.originalname,
+            Body: req.file.buffer
+        }
+        s3.upload(params,(err,data)=>{
+            if (err) {
+                res.json('fail')
+            }
+            const fileURL = data.Location;
+            res.json(fileURL);
+        })
+        
     } catch (error) {
         console.error('Error in /uploadFile:', error);
     }
 });
 
-app.get('/file/:filename', async (req, res) => {
+
+app.get('/file/:filename', (req, res) => {
     try {
-        const file = await gfs.files.findOne({ filename: req.params.filename });
-        if (file) {
-            gridFSBucket.openDownloadStream({ filename: req.params.filename }).pipe(res);
+      const filename = req.params.filename;
+      const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: filename,
+      };
+  
+      s3.getObject(params, (err, data) => {
+        if (err) {
+          console.error('Error in /file/:filename:', err);
+          return res.status(404).json({ error: 'File not found' });
         }
+  
+        res.setHeader('Content-Type', data.ContentType);
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+  
+        data.createReadStream().pipe(res);
+      });
     } catch (error) {
-        console.error('Error in /file/:filename:', error);
+      console.error('Error in /file/:filename:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
-});
+  });
 
 // Save Msg to ChatDB
 app.post('/sendMsg', async (req, res) => {

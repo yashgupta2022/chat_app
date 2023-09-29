@@ -85,10 +85,10 @@ const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item, 
               <FontAwesomeIcon className="fontawesome"  type='button'  onClick={()=>setEmoji(!emojiHide)}   icon={faSmile} size="2xl" style={{color: "white"} }/>
             </Col>
             <Col xs={2} md={1} className="icons">
-              {/* <label htmlFor="fileInput">
-                <FontAwesomeIcon className="fontawesome" type='button' icon={faPaperclip} size="2xl" style={{color: "white", marginTop:8} } />
-              </label>
-              <input type="file" id="fileInput" style={{ display: "none" }} onChange={handleFileChange}/> */}
+                <label htmlFor="fileInput">
+                  <FontAwesomeIcon className="fontawesome" type='button' icon={faPaperclip} size="2xl" style={{color: "white", marginTop:8} } />
+                </label>
+                <input type="file" id="fileInput" style={{ display: "none" }} onChange={handleFileChange}/>
             </Col>
             <Col xs ={6} md={9}>
               <Form onSubmit={msghandleSubmit}>
