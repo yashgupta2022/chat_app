@@ -23,6 +23,7 @@ a{
     flex-direction: column;
     justify-content: center;
     background:url('home-bg.jpg');
+    filter:blur(10px);
     background-size: cover;
     position:absolute;
     height:100vh;
