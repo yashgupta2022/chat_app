@@ -179,10 +179,10 @@ const FriendList =({item,setItem,friendList,individualFriends,showMessages,showf
                                 </>
                             :<></>}
                                 
-                                {/* <input type="file" id="dpChange" style={{ display: "none" }} onChange={handleChangeDP}/>
+                                <input type="file" id="dpChange" style={{ display: "none" }} onChange={handleChangeDP}/>
                                 <label htmlFor="dpChange">
                                     <ListGroup.Item type='button'>Change Profile Picture</ListGroup.Item>
-                                </label> */}
+                                </label>
                                 <ListGroup.Item style={{marginTop:-8}} type='button' onClick={handleLogout}>LogOut</ListGroup.Item>
                             </ListGroup>
                             </div>

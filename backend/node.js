@@ -6,50 +6,24 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const socket = require('socket.io')
 const dotenv = require('dotenv')
-
 const multer = require("multer");
-const { GridFsStorage } = require('multer-gridfs-storage');
-const grid = require('gridfs-stream')
-
 const aws = require('aws-sdk')
 const { v4: uuidv4 } = require('uuid');
-const { runInNewContext } = require("vm");
 dotenv.config()
 
-const URL = process.env.url
+
 
 // Using Middlewares
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ extended: true }));
 
-// const storage = new GridFsStorage({
-//     url: URL,
-//     options: { useUnifiedTopology: true, useNewUrlParser: true },
-//     file: (req, file) => { return { filename: Date.now() + '-file-' + file.originalname } }
-// })
-
-// let upload
-// if (storage) {
-//     upload = multer({ storage });
-// }
-
-// let gfs, gridFSBucket
-// const conn = mongoose.connection
-// conn.once('open', () => {
-//     gridFSBucket = new mongoose.mongo.GridFSBucket(conn.db, {
-//         bucketName: 'fs'
-//     })
-//     gfs = grid(conn.db, mongoose.mongo)
-//     gfs.collection('fs')
-// })
-
-
+//File Upload
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const bucketname = process.env.AWS_BUCKETNAME
 
-
+const URL = process.env.url
 // Connecting to MongoDB
 async function main() {
     try {
@@ -322,17 +296,15 @@ app.get('/file/:filename', (req, res) => {
       s3.getObject(params, (err, data) => {
         if (err) {
           console.error('Error in /file/:filename:', err);
-          return res.status(404).json({ error: 'File not found' });
         }
   
         res.setHeader('Content-Type', data.ContentType);
-        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
   
         data.createReadStream().pipe(res);
       });
     } catch (error) {
       console.error('Error in /file/:filename:', error);
-      res.status(500).json({ error: 'Internal server error' });
     }
   });
 
