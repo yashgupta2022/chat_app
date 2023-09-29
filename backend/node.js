@@ -289,6 +289,7 @@ app.get('/file/:filename', (req, res) => {
       const params = {
         Bucket: process.env.AWS_BUCKET_NAME,
         Key: filename,
+        ContentDisposition:'inline'
       };
   
       s3.getObject(params, (err, data) => {
