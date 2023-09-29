@@ -48,7 +48,7 @@ a{
     margin-bottom: 10px;
     height:50vh;
     border-radius: 30px;
-    filter: drop-shadow(-10px -10px 10px grey);  
+    filter: drop-shadow(10px 10px 10px black);  
 }
 
 .backbtn{
