@@ -169,10 +169,10 @@ p.warningSignin{
 }
 .message-display{
     background-image:url("background.jpg");
-    background-size: cover;
     position:absolute;
     top:60px;
     bottom:50px;
+    padding-bottom:5px;
     width:100%;
     overflow:auto;
 

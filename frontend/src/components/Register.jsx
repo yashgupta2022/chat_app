@@ -9,6 +9,8 @@ import { GoogleLogin } from "@react-oauth/google";
 import jwtDecode from "jwt-decode";
 import { v4 as uuidv4 } from 'uuid';
 import { port } from "../utils/io";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSpinner} from '@fortawesome/free-solid-svg-icons'
 
 
 function Register() {
@@ -21,22 +23,25 @@ function Register() {
   //Sending Data to node-server
   const handleSubmit = async (e)=>{
     e.preventDefault();
+    setWarning(<FontAwesomeIcon icon={faSpinner} spin size="xl" style={{color: "#f50000",}} />)
     if (form.username!=="" && form.password!==''){
         form.userid = uuidv4();
         const response= await axios.post(port+'register',form);
         if (response.data==="fail")
           setWarning("User already registered...")
         else {
-          setWarning("Regirstration Success.. Redirecting to SignIn Page.")
+          setWarning("Registration Successful.. Redirecting to SignIn Page.")
           setTimeout(()=>{navigate('/')},1000);
         }
     }
   }
   
   const loginSuccess = async (res)=>{
+    setWarning(<FontAwesomeIcon icon={faSpinner} spin size="xl" style={{color: "#f50000",}} />)
       const decoded = jwtDecode(res.credential);  
       const response = await axios.post(port+'loginuser',decoded);
       localStorage.setItem(response.data,true)
+      setWarning("Registration Successful...")
       setTimeout(()=>{navigate('/chat/' + response.data)},1000);
   }
 

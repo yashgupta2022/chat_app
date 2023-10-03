@@ -8,6 +8,8 @@ import NavBar from '../utils/NavBar';
 import { GoogleLogin } from "@react-oauth/google";
 import jwtDecode from "jwt-decode";
 import { port } from "../utils/io";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSpinner} from '@fortawesome/free-solid-svg-icons'
 
 function SignIn() {
   const navigate = useNavigate();
@@ -19,12 +21,13 @@ function SignIn() {
   //Sending Data to node-server
   const handleSubmit = async (e)=>{
     e.preventDefault();
+    setWarning(<FontAwesomeIcon icon={faSpinner} spin size="xl" style={{color: "#f50000",}} />)
     if (form.username!=="" && form.password!==''){
         const response= await axios.post(port+'login',form);
         if (response.data==="fail")
           setWarning("Invalid UserName or Password")
         else {
-          setWarning("Login Success")
+          setWarning("Sign In Successful")
           localStorage.setItem(response.data,true)
           setTimeout(()=>{navigate('/chat/' + response.data)},1000);
         }
@@ -32,9 +35,11 @@ function SignIn() {
   }
   
   const loginSuccess = async (res)=>{
+      setWarning(<FontAwesomeIcon icon={faSpinner} spin size="xl" style={{color: "#f50000",}} />)
       const decoded = jwtDecode(res.credential);  
       const response = await axios.post(port+'loginuser',decoded);
       localStorage.setItem(response.data,true)
+      setWarning("Sign In Successful")
       setTimeout(()=>{navigate('/chat/' + response.data)},1000);
   }
 

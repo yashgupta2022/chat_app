@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { Col, Container, Form, Row } from 'react-bootstrap';
 import axios from 'axios';
 
@@ -62,6 +62,11 @@ const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item, 
         setEmoji(true)
     }
 
+    useEffect(()=>{
+      var element = document.getElementsByClassName("message-display")[0];
+        element.scrollTop = element.scrollHeight;
+    },[Msgs])
+
     
     return <>
         <div  hidden={item.username!=='No Chat Selected' }>
@@ -73,7 +78,7 @@ const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item, 
 
           <Row  className='no-gutters message-display '>
             <Col >
-              {Msgs.slice(0).reverse().map((i,index) => 
+              {Msgs.slice(0).map((i,index) => 
                 <MsgTemplate key={index} obj = {{item:i ,type:item.type}} />
               )}
             </Col>
