@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useState,useEffect } from 'react';
+import { useState,useEffect,useRef } from 'react';
 import { Col, Container, Form, Row } from 'react-bootstrap';
 import axios from 'axios';
 
@@ -20,6 +20,7 @@ const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item, 
     const [msginput,setmsgInput] =useState('');
     const [emojiHide,setEmoji] = useState(true)
     const [file,setFile] =useState(null)
+    const messageScroll = useRef(null)
 
     const handleFileChange = (event) => {
       let fileObj = event.target.files[0];
@@ -63,8 +64,9 @@ const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item, 
     }
 
     useEffect(()=>{
-      var element = document.getElementsByClassName("message-display")[0];
-        element.scrollTop = element.scrollHeight;
+      if (messageScroll.current) {
+        messageScroll.current.scrollTop = messageScroll.current.scrollHeight;
+      }
     },[Msgs])
 
     
@@ -76,7 +78,7 @@ const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item, 
           
           <SelectedFriendDetails item={item} setItem={setItem} showfriendList={showfriendList} showMessages={showMessages} screen = {screen} back = {back} setback = {setback}  />
 
-          <Row  className='no-gutters message-display '>
+          <Row  className='no-gutters message-display ' ref = {messageScroll}>
             <Col >
               {Msgs.slice(0).map((i,index) => 
                 <MsgTemplate key={index} obj = {{item:i ,type:item.type}} />
