@@ -11,7 +11,7 @@ import { port } from "./io";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faArrowLeft, faEllipsisVertical} from '@fortawesome/free-solid-svg-icons'
 
-const SelectedFriendDetails = ({item ,setItem, showfriendList,showMessages, screen, back , setback})=>{
+const SelectedFriendDetails = ({item ,setItem, setDoc,showfriendList,showMessages, screen, back , setback })=>{
     
     const {userid} = useParams();
     const [friendlist,setList] = useState('');
@@ -21,8 +21,9 @@ const SelectedFriendDetails = ({item ,setItem, showfriendList,showMessages, scre
     const [detail,setDetail] =useState()
     
     const [dp,setDP] = useState('/alt-dp.jpg');
-    const [dropDown,setDrop] =useState(true)
+    
     const [input,setInput] = useState('')
+    const [dropDown,setDrop] =useState(true)
     const buttonRef = useRef(null)
     const itemRef = useRef(item)
     useEffect(()=>{itemRef.current=item},[item])
@@ -145,12 +146,11 @@ const SelectedFriendDetails = ({item ,setItem, showfriendList,showMessages, scre
       }, []);
 
 
-
     return (
         <Row  className="no-gutters Display-friendInfo">
             {screen<450?<Col xs={1} classname='d-flex justify-content-center'> <FontAwesomeIcon className="backbtn fontawesome" icon={faArrowLeft} size="xl" onClick={()=>setback(!back)} /></Col>:""}
             <Col xs={3} sm={2}  lg={1}  className="d-flex justify-content-center ">  
-                <ShowImage dp={dp} />
+                <ShowImage dp={dp} setDoc={setDoc} />
             </Col>
             <Col xs={screen<450?6:7} sm={8} lg={10}>
                 <Row className="no-gutters " style={{height:30,marginTop:4}}> 
@@ -161,7 +161,7 @@ const SelectedFriendDetails = ({item ,setItem, showfriendList,showMessages, scre
                 </Row>
             </Col>
             <div hidden={dropDown} >
-                <ListGroup style={{right:50,maxWidth:'100%'}} className='dropDown'>
+                <ListGroup style={{right:50,maxWidth:'100%',zIndex:100}} className='dropDown'>
                     {item?.type==='group' ? 
                     <>
                     <ListGroup.Item   type='button' onClick={(e)=>{e.stopPropagation();setHid(hid===1?0:1)}}>Add Participant

@@ -34,11 +34,13 @@ a{
     font-family: Georgia, 'Times New Roman', Times, serif;
     padding-top:2%;
     font-weight: bolder;
+    filter: drop-shadow(1px 1px 1px black); 
 }
 
 .home-tagline{
     padding:1% 0 2% 20%;
     color: white;
+    filter: drop-shadow(2px 2px 2px black);  
     
 }
 
@@ -48,7 +50,7 @@ a{
     margin-bottom: 10px;
     height:50vh;
     border-radius: 30px;
-    
+    filter: drop-shadow(8px 8px 8px black);  
 }
 
 .backbtn{
@@ -124,6 +126,16 @@ p.warningSignin{
     border-radius: 10px;
     width:200px;
 }
+.dropdown-message{
+    background-color: white;
+    position:absolute;
+    z-index:1;
+    bottom:50px;
+    left:5%;
+    box-shadow:0px 2px 8px 0px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    width:200px;
+}
 
 .editFriendHover:hover .editFriend {
     display: block;
@@ -167,10 +179,10 @@ p.warningSignin{
 }
 .message-display{
     background-image:url("background.jpg");
-    background-size: cover;
     position:absolute;
     top:60px;
     bottom:50px;
+    padding-bottom:5px;
     width:100%;
     overflow:auto;
 
@@ -283,6 +295,7 @@ img.msgImg{
     width:50px;
     height:50px;
     margin-top: 5px;
+    box-shadow: 0 1px 1px lightgrey;
 }
 .hoverImg:hover{
     border:2px rgb(72, 72, 255) solid;
@@ -296,4 +309,11 @@ img.msgImg{
  ::-webkit-scrollbar-thumb:hover {
     background-color: #b6b4b4;
   }
+
+
+
+.recordMedia{
+    margin-right:5px;
+    height:40px;
+}
 

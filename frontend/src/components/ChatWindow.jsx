@@ -1,20 +1,20 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {Container, Row ,Col } from 'react-bootstrap';
+import {Container, Row ,Col, Button } from 'react-bootstrap';
 import socket from '../utils/io';
-
 import FriendList from '../utils/FriendList';
 
 import {getAllUsers, getMessages, getfriendList, updateFriendList} from '../utils/API'
 import Messages from '../utils/Messages';
+import FullScrImg from '../utils/FullScrImg';
 
-function ChatWindow(){
+function ChatWindow({status, startRecording, stopRecording, mediaBlobUrl, clearBlobUrl, pauseRecording , resumeRecording ,setFacingMode}){
   
     const {userid} =useParams();
     const navigate = useNavigate();
     
-    
+    const [isDoc,setDoc] = useState(null);
     const [friendList,setFriendList] = useState([{}])
     const [individualFriends,setIndiFriends] = useState([])
     const [item,setItem] = useState({userid:'', username:'No Chat Selected',room:'',type:''})
@@ -100,18 +100,22 @@ function ChatWindow(){
   
   useEffect(()=>{window.addEventListener('resize', handleResize);},[])
 
-      return  <Container fluid className='px-0 chat-window'>
+      return <Container fluid className='px-0 chat-window'>
+        <>{<>
+                
+      {isDoc ? <FullScrImg isDoc={isDoc} setDoc={setDoc} /> :" "}
         {screen<450 ? <>
         <Row className='no-gutters h-100 ' >
         <Col className={!show ? 'd-none' : ''} >
           <FriendList setItem={setItem} 
             friendList={friendList} showfriendList={showfriendList}
             individualFriends={individualFriends} showMessages={showMessages} handleLogout={handleLogout}
-            resultantUsers={resultantUsers} setShow={setShow}
+            resultantUsers={resultantUsers} setShow={setShow} setDoc={setDoc}
           /></Col>
           <Col className={show ? 'd-none message-area' : 'message-area'} >
-          <Messages Msgs ={Msgs} setMsgs ={setMsgs} 
+          <Messages Msgs ={Msgs} setMsgs ={setMsgs} setDoc={setDoc} setFacingMode={setFacingMode}
           showfriendList ={showfriendList} item={item} setItem={setItem} showMessages={showMessages} screen={screen}  back = {show} setback = {setShow}
+          status={status}    startRecording={startRecording}   stopRecording={stopRecording}  mediaBlobUrl={mediaBlobUrl}  clearBlobUrl={clearBlobUrl}  pauseRecording={pauseRecording}  resumeRecording={resumeRecording}
           /></Col>
 
       </Row></>
@@ -122,15 +126,17 @@ function ChatWindow(){
           <FriendList setItem={setItem} 
             friendList={friendList} showfriendList={showfriendList}
             individualFriends={individualFriends} showMessages={showMessages} handleLogout={handleLogout}
-            resultantUsers={resultantUsers} setShow={setShow}
+            resultantUsers={resultantUsers} setShow={setShow} setDoc={setDoc}
           /></Col>
           <Col xs={9} >
-          <Messages Msgs ={Msgs} setMsgs ={setMsgs} 
-          showfriendList ={showfriendList} item={item} setItem={setItem} showMessages={showMessages}
-          /></Col>
+          <Messages Msgs ={Msgs} setMsgs ={setMsgs} setDoc={setDoc} setFacingMode={setFacingMode}
+          showfriendList ={showfriendList} item={item} setItem={setItem} showMessages={showMessages} screen={screen}  back = {show} setback = {setShow}
+          status={status}    startRecording={startRecording}   stopRecording={stopRecording}  mediaBlobUrl={mediaBlobUrl}  clearBlobUrl={clearBlobUrl}  pauseRecording={pauseRecording}  resumeRecording={resumeRecording}
+          />
+            </Col>
 
-      </Row>}
-
+      </Row>} </>
+      }</>
       </Container>
 
 }

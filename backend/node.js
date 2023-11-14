@@ -79,6 +79,18 @@ const chatSchema = new mongoose.Schema({
 
 const Chat = mongoose.model('Chat', chatSchema);
 
+app.post('/getuserprofile',async(req,res)=>{
+    try{
+        const user = await User.findOne({userid:req.body.userid})
+        
+        if (user) {res.json({username:user.username , email  : user.email})} 
+        else {res.json('NotFound')}
+    }
+    catch(error){
+        console.error('Error in /getuserprofile:', error);
+    }
+})
+
 app.post('/loginuser', async (req, res) => {
     try {
         const existingUser = await User.findOne({ userid: req.body.sub });

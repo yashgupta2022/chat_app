@@ -1,18 +1,19 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
-import {Col, Container, Form, ListGroup, Row } from 'react-bootstrap';
+import {Col, Container, Form, Image, ListGroup, Row } from 'react-bootstrap';
 import axios from 'axios';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEllipsisVertical, faPaperPlane} from '@fortawesome/free-solid-svg-icons'
+import { faEllipsisVertical, faPaperPlane, faPenToSquare} from '@fortawesome/free-solid-svg-icons'
 
 import socket from '../utils/io';
 import FriendInfo from './FriendInfo'
 import ShowImage from './ShowImage';
 import { handleDPChange ,getRoom, fetchDP} from './API';
 import { port } from '../utils/io';
+import UserProfile from './UserProfile';
 const FriendList =({item,setItem,friendList,individualFriends,showMessages,showfriendList,
-  handleLogout,resultantUsers,setShow})=>{
+  handleLogout,resultantUsers,setShow , setDoc})=>{
     const {userid} =useParams();
     const [input,setInput] = useState('')
     const [search,setSearch] = useState('')
@@ -153,16 +154,18 @@ const FriendList =({item,setItem,friendList,individualFriends,showMessages,showf
   return (<>
         <Row className='no-gutters'>
             <Col className='Display-friendInfo'>
-                <Row className='no-gutters'>
-                    <Col xs={10} style={{paddingLeft:10}}>
-                    <ShowImage dp={dp} />
+                <Row className='no-gutters' >
+                    <Col xs={3} sm={4} md={3}  style={{paddingLeft:10}}>
+                    <ShowImage dp={dp} setDoc={setDoc} />
                     </Col>
+                    <Col xs ={7} sm ={6} md={7} onClick ={()=>{if (isOpen===4){setOpen(1)} else{setOpen(4)}}}></Col>
                     <Col xs={2}  className=' my-0 d-flex justify-content-center align-items-center' >
                         <button ref={buttonRef} onClick={()=>setDrop(!dropDown)} style={{border:0 ,outline:'none'}} >
                             <FontAwesomeIcon className="fontawesome" color='#1e3050' icon={faEllipsisVertical} size='2xl' /> 
                         </button>
                             <div hidden={dropDown}  >
                             <ListGroup  className='dropDown' style={{ maxWidth:'400%'}}>
+                            {isOpen!==4 ?<ListGroup.Item type='button' onClick = {()=>setOpen(4)}>View Profile</ListGroup.Item>:<></>}
                             {isOpen===1?<>
                                 <ListGroup.Item  onClick={()=>{resetSidebar();setOpen(3)}}>New Friend</ListGroup.Item>
                                 <ListGroup.Item  onClick={()=>{resetSidebar();setOpen(2)}}>New Group</ListGroup.Item>
@@ -178,12 +181,14 @@ const FriendList =({item,setItem,friendList,individualFriends,showMessages,showf
                                 <ListGroup.Item  onClick={()=>{resetSidebar();setOpen(2)}}>New Group</ListGroup.Item>
                                 </>
                             :<></>}
-                                
-                                <input type="file" id="dpChange" style={{ display: "none" }} onChange={handleChangeDP}/>
-                                <label htmlFor="dpChange">
-                                    <ListGroup.Item type='button'>Change Profile Picture</ListGroup.Item>
-                                </label>
-                                <ListGroup.Item style={{marginTop:-8}} type='button' onClick={handleLogout}>LogOut</ListGroup.Item>
+                            
+                            {isOpen===4 ?<>
+                              <ListGroup.Item  onClick={()=>{resetSidebar();setOpen(1)}}>Search Friend</ListGroup.Item>
+                              <ListGroup.Item  onClick={()=>{resetSidebar();setOpen(3)}}>New Friend</ListGroup.Item>
+                              <ListGroup.Item  onClick={()=>{resetSidebar();setOpen(2)}}>New Group</ListGroup.Item>
+                            </>  : <></>}
+                               
+                                <ListGroup.Item type='button' onClick={handleLogout}>LogOut</ListGroup.Item>
                             </ListGroup>
                             </div>
         
@@ -201,11 +206,11 @@ const FriendList =({item,setItem,friendList,individualFriends,showMessages,showf
         </div>
         
         <Container className='px-0 scrollable-list'>
-            {searchList.length===0?<FriendInfo item={{username:'No Friends Added', type:'' , userid:'' , room:''}} />
+            {searchList.length===0?<FriendInfo isOpen={isOpen} setDoc={setDoc} item={{username:'No Friends Added', type:'' , userid:'' , room:''}} />
             :searchList.slice(0).reverse().map((item,index) =>
             <div type='button'  className='list-group-item-action  editFriendHover'  onClick={()=>{handleClick(item)}}  
                 key = {index}  style={{height:80,padding:10, borderBottom:'1px lightgray solid '}}>
-                <FriendInfo item={item} />
+                <FriendInfo isOpen={isOpen} setDoc={setDoc} item={item} />
             </div>)}
       </Container>
     
@@ -227,11 +232,11 @@ const FriendList =({item,setItem,friendList,individualFriends,showMessages,showf
             
             <Container style={{width:'100%'}} className='px-0 mx-0 scrollable-list '>
              
-          {individualFriends.length===0?<FriendInfo item={{username:'No Friends Added', type:'' , userid:'' , room:''}} />
+          {individualFriends.length===0?<FriendInfo isOpen={isOpen} setDoc={setDoc} item={{username:'No Friends Added', type:'' , userid:'' , room:''}} />
           :individualFriends.slice(0).reverse().map((item,index) =>
             <div key={index} type='button' className='list-group-item d-flex' style={{height:80, borderBottom:'1px lightgray solid '}} 
               onClick= {()=>{handleCheckBox(item);}}>
-              <FriendInfo item={item} />
+              <FriendInfo isOpen={isOpen} setDoc={setDoc} item={item} />
               <Form.Check style={{paddingRight:'10%',marginTop:10 }}  onClick={(e) => { e.stopPropagation(); }}
               onChange={() => { handleCheckBox(item); }} checked={group.some(i => i===item.userid)}
               type='switch' label=''/> 
@@ -252,11 +257,30 @@ const FriendList =({item,setItem,friendList,individualFriends,showMessages,showf
            (addList).slice(0).reverse().map((item,index) =>
             <div type='button' disabled={disable} className='list-group-item-action  editFriendHover'  onClick={()=>{addFriend(item)}}
             key = {index}  style={{height:80,padding:10, borderBottom:'1px lightgray solid '}}>
-                <FriendInfo item={{userid:item.userid, username:item.username , type:'individual' , room:getRoom(item.userid,userid)}} />
+                <FriendInfo isOpen={isOpen} setDoc={setDoc} item={{userid:item.userid, username:item.username , type:'individual' , room:getRoom(item.userid,userid)}} />
               </div>) : 
-              <FriendInfo item={{username:'No Friends Added', type:'' , userid:'' , room:''}} />}
+              <FriendInfo isOpen={isOpen} setDoc={setDoc} item={{username:'No Friends Added', type:'' , userid:'' , room:''}} />}
           
       </Container>
+    
+    </div>
+
+
+    {/* USER PROFILE */}
+    <div  hidden={isOpen===4?false:true} >  
+        <Container style={{position:'absolute', bottom:0, top:60,overflow:'scroll'}}>
+          <Row style={{paddingTop:20 , justifyContent:'center'}}>
+            <Image  type='button' src={dp} style={{boxShadow: '0 1px 8px lightgrey' ,borderRadius:'50%',maxWidth:'100%', height:200,width:200}} onClick ={()=>{setDoc(dp)} } alt = "/alt-dp.jpg"/>
+            <input type="file" id="dpChange" style={{ display: "none" }} onChange={handleChangeDP}/>
+              <label htmlFor="dpChange">
+              <FontAwesomeIcon type='button' icon={faPenToSquare} />
+              </label>
+          </Row>
+          <Row className='d-flex justify-content-center' style={{ margin:'10px 5px 0 5px' ,fontSize:15}}>
+            <UserProfile dp={dp}/>
+          </Row>
+        </Container>
+      
     
     </div>
 
