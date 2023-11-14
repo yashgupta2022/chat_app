@@ -79,7 +79,7 @@ const SelectedFriendDetails = ({item ,setItem, setDoc,showfriendList,showMessage
         await axios.post(port+'exitGrp',{userid,item})
         setDrop(true)
         setItem({userid:'', username: 'No Chat Selected',type:"" ,room:''})
-        setback(true);
+        if (screen<450) {setback(true);}
         showfriendList();
         if (item.type==='individual'){socket.emit('deleted-friendlist' ,item.userid,userid)}
         else {socket.emit('show-friendlist' ,fl)}
