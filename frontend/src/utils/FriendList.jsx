@@ -270,7 +270,7 @@ const FriendList =({item,setItem,friendList,individualFriends,showMessages,showf
     <div  hidden={isOpen===4?false:true} >  
         <Container style={{position:'absolute', bottom:0, top:60,overflow:'scroll'}}>
           <Row style={{paddingTop:20 , justifyContent:'center'}}>
-            <Image  type='button' src={dp} style={{boxShadow: '0 1px 8px lightgrey' ,borderRadius:'50%',maxWidth:'100%', height:200,width:200}} onClick ={()=>{setDoc(dp)} } alt = "/alt-dp.jpg"/>
+            {dp ?<Image  type='button' src={dp} style={{boxShadow: '0 1px 8px lightgrey' ,borderRadius:'50%',maxWidth:'100%', height:200,width:200}} alt = "/alt-dp.jpg"/> : <Image  type='button' src="/alt-dp.jpg" style={{boxShadow: '0 1px 8px lightgrey' ,borderRadius:'50%',maxWidth:'100%', height:200,width:200}} onClick ={()=>{setDoc(dp)} } alt = "/alt-dp.jpg"/>}
             <input type="file" id="dpChange" style={{ display: "none" }} onChange={handleChangeDP}/>
               <label htmlFor="dpChange">
               <FontAwesomeIcon type='button' icon={faPenToSquare} />
