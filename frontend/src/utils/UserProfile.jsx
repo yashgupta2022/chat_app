@@ -14,7 +14,7 @@ function UserProfile({dp}) {
         }
     }
     useEffect(()=>{
-        // getprofile();
+        getprofile();
     },[dp])
 
     return (
