@@ -51,9 +51,11 @@ const Messages =({Msgs , setMsgs ,setItem, showfriendList , showMessages ,item, 
     useEffect(()=>{
       if (!isOpenVideo && dropDown ){
         stopRecording()
-        clearFile()
+        clearBlobUrl();
+        setPhoto(false);
+        setAudio(true);
       }
-    },[isOpenVideo, dropDown,msginput])
+    },[isOpenVideo, dropDown])
 
     const msghandleSubmit =async (e)=>{
         e.preventDefault();
